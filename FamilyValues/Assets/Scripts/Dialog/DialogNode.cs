@@ -8,7 +8,7 @@ using UnityEngine.Assertions;
 [CreateAssetMenu(fileName = "Dialog Node", menuName = "Dialog/Node", order = 0)]
 public class DialogNode : SerializedScriptableObject
 {
-    public RuntimeSet AudioPlayerLocation;
+    public RuntimeSet NarrativeSourceSet;
     public Segment[] Segments;
     [Space(50.0f)]
     [DictionaryDrawerSettings(DisplayMode = DictionaryDisplayOptions.Foldout, IsReadOnly = false, KeyLabel = "key", ValueLabel = "value")]
@@ -22,11 +22,16 @@ public class DialogNode : SerializedScriptableObject
             Direction = Children.Keys.First();
     }
 
-    public void Play(System.Action OnFinishedCallback)
+    /// <summary>
+    /// Will execute the dialog node, communicating with its Narrative Source.
+    /// The Narrative source tracks completion and pushing the dialog to a given UI
+    /// The callback method is called when Narrative Source finishes.
+    /// </summary>
+    public virtual void Play(System.Action OnFinishedCallback)
     {
-        Assert.IsFalse(AudioPlayerLocation.IsEmpty, "Missing an AudioPlayerLocation in the scene");
-        AudioSourceRuntime source = AudioPlayerLocation.GetFirst<AudioSourceRuntime>();
-        Assert.IsNotNull(source, "The RuntimeSet, is not set by an AudioSourceRuntime");
+        Assert.IsFalse(NarrativeSourceSet.IsEmpty, "Missing an NarrativeSource in the scene");
+        NarrativeSource source = NarrativeSourceSet.GetFirst<NarrativeSource>();
+        Assert.IsNotNull(source, "The RuntimeSet, is not set by an NarrativeSource");
 
         source.Play(Segments, OnFinishedCallback);
     }
@@ -41,7 +46,6 @@ public class DialogNode : SerializedScriptableObject
     public DialogNode Next(ScriptableEnum childDirection)
     {
         Assert.IsNotNull(childDirection, "The direction cannot be null");
-
         // if the child collection is non existent or doesnt have the desired direction. return null
         if (Children.Count < 1 || !Children.ContainsKey(childDirection))
             return null;
@@ -58,7 +62,7 @@ public class DialogNode : SerializedScriptableObject
     /// </summary>
     /// <returns>a child node</returns>
     public DialogNode Next()
-    {
+    {     
         if(Children.Count < 1)
             return null;
 

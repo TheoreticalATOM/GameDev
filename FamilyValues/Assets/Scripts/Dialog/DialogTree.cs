@@ -28,19 +28,8 @@ public class DialogTree : ScriptableObject
 
     public bool Play()
     {
-        if(!ActiveNode)
-        {
-            int i = 0;
-            foreach (var node in mNodeTrace)
-                Debug.Log(++i + ". " + node.name);
-            return false;
-        }
-
         mNodeTrace.AddLast(ActiveNode);
-        ActiveNode.Play(() =>
-        {
-            Next();
-        });
+        ActiveNode.Play(Next);
 
         return true;
     }

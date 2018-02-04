@@ -5,7 +5,7 @@ using UnityEngine.Assertions;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(AudioSource))]
-public class AudioSourceRuntime : MonoBehaviour, IRuntime
+public class NarrativeSource : MonoBehaviour, IRuntime
 {
     public RuntimeSet Source;
     public RuntimeSet DialogUISet;
