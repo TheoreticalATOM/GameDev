@@ -14,5 +14,17 @@ namespace SDE
             queue.Enqueue(value);
             return value;
         }
+
+        public static void Shuffle<T>(this T[] list, System.Random rng)
+        {
+            int n = list.Length;
+            while(n-- > 1)
+            {
+                int k = rng.Next(n + 1);
+                T temp = list[k];
+                list[k] = list[n];
+                list[n] = temp; 
+            }
+        }
     }
 }

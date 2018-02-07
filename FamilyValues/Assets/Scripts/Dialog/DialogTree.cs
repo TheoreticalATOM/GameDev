@@ -7,6 +7,8 @@ using System.Collections.Generic;
 public class DialogTree : ScriptableObject
 {
     public DialogNode Root;
+    public GameEvent OnReachedEnd;
+
     public DialogNode ActiveNode { get; private set; }
 
     private LinkedList<DialogNode> mNodeTrace = new LinkedList<DialogNode>();
@@ -24,14 +26,25 @@ public class DialogTree : ScriptableObject
     public void Next()
     {
         ActiveNode = ActiveNode.Next();
+        // if the active node is null, then raise the tree finished event
+        if (!ActiveNode)
+        {
+            if(OnReachedEnd)
+                OnReachedEnd.Raise();
+        }
     }
 
     public bool Play()
     {
-        mNodeTrace.AddLast(ActiveNode);
-        ActiveNode.Play(Next);
+        bool isNotPassedLeafNode = ActiveNode != null;
 
-        return true;
+        // if the active node is null (gone passed a leaf node), then play the node
+        if (isNotPassedLeafNode)
+        {
+            mNodeTrace.AddLast(ActiveNode);
+            ActiveNode.Play(Next);
+        }
+        return isNotPassedLeafNode;
     }
 }
 
