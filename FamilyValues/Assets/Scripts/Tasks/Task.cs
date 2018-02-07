@@ -17,7 +17,8 @@ public abstract class Task : LimitedSerializedMonoBehaviour, IReset
     [MinMaxSlider(0.0f, 30.0f, true)] public Vector2 TimeToFinishInSeconds;
     [MinValue(0)] public float SuspicionIncrease = 5.0f;
     [MinValue(0)] public float SuspicionDecrease = 5.0f;
-	
+
+    [Header("Event")]
 	public UnityEvent WrongTask;
 	public UnityEvent FinishedItTooQuickly;
 	public UnityEvent FinsihedItTooLate;
