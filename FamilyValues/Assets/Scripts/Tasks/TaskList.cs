@@ -5,11 +5,13 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 using SDE;
 using UnityEngine.Events;
+using SDE.Data;
 
 public class TaskList : SerializedMonoBehaviour
 {
     // ________________________________________________________ Inspector Content
-    public Task SpecificTask;
+    [Required] public RuntimeSet DirectorSet;
+    [Required] public Task SpecificTask;
     [MinValue(0)] public int NumberOfRandomTasks;
     public Task[] RandomTasks;
     public UnityEvent FinishedEveryTask;
@@ -63,9 +65,6 @@ public class TaskList : SerializedMonoBehaviour
     /// Returns the currently active task. This value changes when the current active task is completed
     /// </summary>
     public Task ActiveTask { get { return mTaskList.Peek(); } }
-
-    // TODO: Move this to the Director
-    public float CurrentSuspicion { get; private set; }
 
     /// <summary>
     /// Returns the number of tasks that are left on the task list
@@ -133,7 +132,9 @@ public class TaskList : SerializedMonoBehaviour
     /// </summary>
     public void RecordFailure(float suspicionAmount, bool consideredDone = false)
     {
-        CurrentSuspicion += Mathf.Min(CurrentSuspicion + Mathf.Abs(suspicionAmount), 100.0f);
+        if(!DirectorSet.IsEmpty)
+            DirectorSet.GetFirst<Director>().IncreaseSuspicion(suspicionAmount);
+            
         if (consideredDone)
             UpdateTheTaskList();
     }
@@ -145,7 +146,8 @@ public class TaskList : SerializedMonoBehaviour
     /// </summary>
     public void RecordSuccess(float suspicionAmount)
     {
-        CurrentSuspicion = Mathf.Max(CurrentSuspicion - Mathf.Abs(suspicionAmount), 0.0f);
+        if(!DirectorSet.IsEmpty)
+            DirectorSet.GetFirst<Director>().DecreaseSuspicion(suspicionAmount);
         UpdateTheTaskList();
     }
     #endregion
