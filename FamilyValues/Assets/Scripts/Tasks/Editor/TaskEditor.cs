@@ -35,6 +35,9 @@ public class TaskEditor : OdinEditor
 		GUILayout.Label(mTarget.CurrentTime.ToString("0.0") + "s / " + mTarget.MaximumTime + "s");
         GUILayout.EndVertical();
 
+        if(GUILayout.Button("Start Task"))
+            mTarget.StartTask();
+
         base.OnInspectorGUI();
     }
 }

@@ -13,16 +13,15 @@ public class LimitedSerializedMonoBehaviour : SerializedMonoBehaviour
 public abstract class Task : LimitedSerializedMonoBehaviour, IReset
 {
     // ________________________________________________________ Inspector Content	
-    [TextArea(3, 15)] public string Description;
-    [MinMaxSlider(0.0f, 30.0f, true)] public Vector2 TimeToFinishInSeconds;
-    [MinValue(0)] public float SuspicionIncrease = 5.0f;
-    [MinValue(0)] public float SuspicionDecrease = 5.0f;
+    [TextArea(3, 15), TabGroup("Details")] public string Description;
+    [MinMaxSlider(0.0f, 30.0f, true), TabGroup("Details")] public Vector2 TimeToFinishInSeconds;
+    [MinValue(0), TabGroup("Details")] public float SuspicionIncrease = 5.0f;
+    [MinValue(0), TabGroup("Details")] public float SuspicionDecrease = 5.0f;
 
-    [Header("Event")]
-	public UnityEvent WrongTask;
-	public UnityEvent FinishedItTooQuickly;
-	public UnityEvent FinsihedItTooLate;
-	public UnityEvent FinishedTask;
+	[TabGroup("Events")] public UnityEvent WrongTask;
+	[TabGroup("Events")] public UnityEvent FinishedItTooQuickly;
+	[TabGroup("Events")] public UnityEvent FinishedItTooLate;
+	[TabGroup("Events")] public UnityEvent FinishedTask;
 
     // ________________________________________________________ Datamembers	
     private float mStartTime;
@@ -108,7 +107,6 @@ public abstract class Task : LimitedSerializedMonoBehaviour, IReset
 	/// It is from here on out, that the CurrentTime will be tracked.
 	/// If the task is not the currently active one, it will increase the suspicion as well as ignore the request to start.
 	/// </summary>
-    [Button]
     public void StartTask()
     {	
 		// if there is no owner, then do nothing
@@ -132,7 +130,7 @@ public abstract class Task : LimitedSerializedMonoBehaviour, IReset
 			if (CurrentTime > MaximumTime)
 			{
 				FailTaskNotTerminative();
-				FinsihedItTooLate.Invoke();
+				FinishedItTooLate.Invoke();
 				/* this is set to nothing, so that in the update, no longer will the timer update, 
 				as there is no point after already exceeding the maximumtime */
 				mTimerCheckAction = () => { };
