@@ -161,7 +161,7 @@ public abstract class Task : LimitedSerializedMonoBehaviour, IReset
             if (CurrentTime < MinimumTime)
             {
 				// passing true, telling the list that it is considered completed
-                mOwner.RecordFailure(SuspicionDecrease, true);
+                mOwner.RecordFailure(SuspicionIncrease, true);
 				FinishedItTooQuickly.Invoke();
                 Debug.Log(name + " : task failed because it was done too quickly!");
             }
