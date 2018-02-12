@@ -4,13 +4,13 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class LimitedSerializedMonoBehaviour : SerializedMonoBehaviour
+public abstract class LimitedSerializedMonoBehaviour : Resetable
 {
     protected virtual void Start() { }
     protected virtual void Update() { }
 }
 
-public abstract class Task : LimitedSerializedMonoBehaviour, IReset
+public abstract class Task : LimitedSerializedMonoBehaviour
 {
     // ________________________________________________________ Inspector Content	
     [TextArea(3, 15), TabGroup("Details")] public string Description;
@@ -215,7 +215,7 @@ public abstract class Task : LimitedSerializedMonoBehaviour, IReset
         mTimerCheckAction = () => { };
     }
 
-    public void ResetObject()
+    public override void ResetObject()
     {
         ResetTaskTracking();
         mOwner = null;

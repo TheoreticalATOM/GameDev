@@ -5,51 +5,42 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Director : SerializedMonoBehaviour, IRuntime
+public class Director : SerializedMonoBehaviour
 {
     // ________________________________________________________ Inspector Content
-    [Required] public RuntimeSet DirectorSet;
-    [MinValue(1)] public float MaxSuspicion;
-
-    [Header("UI")]
-    public RuntimeSet SuspicionLoadingBar;
+    [TextArea(1, 3)] public string LevelName;
     
+    [Header("Suspicion")]
+    public FloatVariable MaxSuspicion;
+    public FloatVariable CurrentSuspicion;
+    public LoadingBar SuspicionLoadingBar;
+
+    [Header("GameOver Event")]
     public UnityEvent MaxedOnSuspicion;
 
     // ________________________________________________________ Datamembers
 
     // ________________________________________________________ Getters
-    public float CurrentSuspicion { get; private set; }
-    public float CurrentSuspicionInPercentage { get { return CurrentSuspicion / MaxSuspicion; } }
+    public float CurrentSuspicionInPercentage { get { return CurrentSuspicion.Value / MaxSuspicion.Value; } }
 
     // ________________________________________________________ Controls
     public void IncreaseSuspicion(float amount)
     {
-        CurrentSuspicion = Mathf.Min(CurrentSuspicion + Mathf.Abs(amount), MaxSuspicion);
+        CurrentSuspicion.Value = Mathf.Min(CurrentSuspicion.Value + Mathf.Abs(amount), MaxSuspicion.Value);
         UpdateSuspiciousUI();
-        
-        if (CurrentSuspicion >= MaxSuspicion)
+
+        if (CurrentSuspicion.Value >= MaxSuspicion.Value)
             MaxedOnSuspicion.Invoke();
     }
     public void DecreaseSuspicion(float amount)
     {
-        CurrentSuspicion = Mathf.Max(CurrentSuspicion - Mathf.Abs(amount), 0.0f);
-        UpdateSuspiciousUI();
-    }
-
-    // ________________________________________________________ Methods
-    private void Awake()
-    {
-        DirectorSet.Add(this);
-        CurrentSuspicion = 0.0f;
-        DontDestroyOnLoad(this);
-
+        CurrentSuspicion.Value = Mathf.Max(CurrentSuspicion.Value - Mathf.Abs(amount), 0.0f);
         UpdateSuspiciousUI();        
     }
 
+    // ________________________________________________________ Methods
     private void UpdateSuspiciousUI()
     {
-        if(!SuspicionLoadingBar.IsEmpty)
-            SuspicionLoadingBar.GetFirst<RuntimeLoadingBar>().LoadingBar.UpdateBar(CurrentSuspicion, MaxSuspicion);
+        SuspicionLoadingBar.UpdateBar(CurrentSuspicion.Value, MaxSuspicion.Value);
     }
 }

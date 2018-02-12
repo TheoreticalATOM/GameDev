@@ -10,11 +10,12 @@ using SDE.Data;
 public class TaskList : SerializedMonoBehaviour
 {
     // ________________________________________________________ Inspector Content
-    [Required] public RuntimeSet DirectorSet;
-    [Required] public Task SpecificTask;
-    [MinValue(0)] public int NumberOfRandomTasks;
-    public Task[] RandomTasks;
-    public UnityEvent FinishedEveryTask;
+    [Required, TabGroup("Details")] public Director Director;
+    [Required, TabGroup("Details")] public Task SpecificTask;
+    [TabGroup("Details")] public UnityEvent FinishedEveryTask;
+    
+    [MinValue(0), TabGroup("Random Tasks")] public int NumberOfRandomTasks;
+    [TabGroup("Random Tasks")] public Task[] RandomTasks;
 
     void OnValidate()
     {
@@ -50,14 +51,14 @@ public class TaskList : SerializedMonoBehaviour
     private Queue<Task> mTaskList;
     private System.Random mRandomizer;
 
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     public class EditorTaskName
     {
         public bool Complete;
         public string Name;
     }
     [HideInInspector] public Dictionary<Task, EditorTaskName> TaskListNames = new Dictionary<Task, EditorTaskName>();
-    #endif
+#endif
 
     // ________________________________________________________ Getters
     #region Getters
@@ -86,9 +87,9 @@ public class TaskList : SerializedMonoBehaviour
         // clear the current list of tasks
         mTaskList.Clear();
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         TaskListNames.Clear();
-        #endif
+#endif
 
         // if there are no random tasks, then just simply add the specific task
         if (NumberOfRandomTasks < 1)
@@ -132,9 +133,7 @@ public class TaskList : SerializedMonoBehaviour
     /// </summary>
     public void RecordFailure(float suspicionAmount, bool consideredDone = false)
     {
-        if(!DirectorSet.IsEmpty)
-            DirectorSet.GetFirst<Director>().IncreaseSuspicion(suspicionAmount);
-            
+        Director.IncreaseSuspicion(suspicionAmount);
         if (consideredDone)
             UpdateTheTaskList();
     }
@@ -146,8 +145,7 @@ public class TaskList : SerializedMonoBehaviour
     /// </summary>
     public void RecordSuccess(float suspicionAmount)
     {
-        if(!DirectorSet.IsEmpty)
-            DirectorSet.GetFirst<Director>().DecreaseSuspicion(suspicionAmount);
+        Director.DecreaseSuspicion(suspicionAmount);
         UpdateTheTaskList();
     }
     #endregion
@@ -162,40 +160,37 @@ public class TaskList : SerializedMonoBehaviour
         foreach (Task task in RandomTasks)
             task.OnTaskInit();
         SpecificTask.OnTaskInit();
-
-		// TODO: Remove the populate task list
-        PopulateTaskList();
     }
 
     private void AddTaskToList(Task task)
     {
-		/* gives the task a record of the TaskList (this), 
+        /* gives the task a record of the TaskList (this), 
 		so that the task can keep the TaskList updated on when a task is completed and/or failed */
         task.AddTask(this);
 
-		// add it to the queue of required tasks to be done
+        // add it to the queue of required tasks to be done
         mTaskList.Enqueue(task);
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         TaskListNames.Add(task, new EditorTaskName()
         {
             Complete = false,
             Name = task.name
         });
-        #endif
+#endif
     }
 
     private void UpdateTheTaskList()
     {
-		/* will reomve the currenlty active task and check if there are any left.
+        /* will reomve the currenlty active task and check if there are any left.
 		If none, then fire off an event */
-        
+
         Task task = mTaskList.Dequeue();
-        #if UNITY_EDITOR
-        if(TaskListNames.ContainsKey(task))
+#if UNITY_EDITOR
+        if (TaskListNames.ContainsKey(task))
             TaskListNames[task].Complete = true;
-        #endif
-        
+#endif
+
         if (TasksLeft < 1)
             FinishedEveryTask.Invoke();
     }

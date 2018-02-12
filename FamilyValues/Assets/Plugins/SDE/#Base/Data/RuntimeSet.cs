@@ -9,7 +9,7 @@ namespace SDE.Data
     public class RuntimeSet : ScriptableObject
     {
         LinkedList<IRuntime> mList = new LinkedList<IRuntime>();
-        
+
         // Setters
         public void Add(IRuntime item)
         {
@@ -30,7 +30,25 @@ namespace SDE.Data
             return (T)mList.Last.Value;
         }
 
+        public bool TryGetFirst<T>(ref T result) where T : IRuntime
+        {
+            return TryGet<T>(ref result, GetFirst<T>);
+        }
+        public bool TryGetLast<T>(ref T result) where T : IRuntime
+        {
+            return TryGet<T>(ref result, GetLast<T>);
+        }
+
         public bool IsEmpty { get { return mList.Count < 1; } }
         public LinkedList<IRuntime> List { get { return mList; } }
+
+        private bool TryGet<T>(ref T result, System.Func<T> fetchMethod) where T : IRuntime
+        {
+            if (IsEmpty)
+                return false;
+
+            result = fetchMethod();
+            return result != null;
+        }
     }
 }
