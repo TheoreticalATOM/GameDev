@@ -20,23 +20,29 @@ public class DayCycle : SerializedMonoBehaviour
     [TabGroup("Details")] public UnityEvent OnAllSegmentsCompleted;
     [TabGroup("Day Segments")] public DayProperty[] DailyProperties;
 
+    public ImageFade ScreenFade;
+
     private int mSegmentIndex = 0;
 
     public void MoveToNextDay()
     {
         DailyProperties[mSegmentIndex++].OnDeselected.Invoke();
         if(mSegmentIndex > DailyProperties.Length - 1)
-            OnAllSegmentsCompleted.Invoke();
+            ScreenFade.FadeOut(() => OnAllSegmentsCompleted.Invoke());
         else
         {
-            DailyProperties[mSegmentIndex].OnSelected.Invoke();
-            UpdateSun();
+            ScreenFade.FadeOut(() =>
+            {
+                DailyProperties[mSegmentIndex].OnSelected.Invoke();
+                UpdateSun();
+                ScreenFade.FadeIn();
+            });
         }
     }
 
     private void Start()
     {
-        DailyProperties[mSegmentIndex].OnSelected.Invoke();
+        ScreenFade.FadeIn(() => DailyProperties[mSegmentIndex].OnSelected.Invoke());
         UpdateSun();
     }
 
