@@ -10,7 +10,7 @@ public class EventList : MonoBehaviour
 
 	public void RaiseEvent()
 	{
-		if(mIndex < Events.Length-1)
+		if(mIndex < Events.Length)
 			Events[mIndex++].Invoke();
 	}	
 }
