@@ -3,24 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public abstract class Item : MonoBehaviour {
+[RequireComponent(typeof(cakeslice.Outline))]
+public abstract class Item : MonoBehaviour
+{
 
-    public DialogNode[] nodes; 
+    public DialogNode[] nodes;
     private bool mHasBeenUsedToday;
+
+    public cakeslice.Outline ItemOutline { get; private set; }
+
+    private void Awake()
+    {
+        ItemOutline = GetComponent<cakeslice.Outline>();
+    }
+
 
     public void StartInteract(GameObject Object, GameObject camera)
     {
-        if(!mHasBeenUsedToday && nodes.Length > 0)
+        if (!mHasBeenUsedToday && nodes.Length > 0)
         {
             int random = Random.Range(0, nodes.Length);
             Assert.IsNotNull(nodes[random], "a node in " + name + " is null");
-            
+
             nodes[random].Play(null);
             mHasBeenUsedToday = true;
         }
-
-
-
         OnStartInteract(Object, camera);
     }
 

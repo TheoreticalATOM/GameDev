@@ -53,7 +53,7 @@ public class ItemPhysics : Item
 
     public override void StopInteract(GameObject Object, GameObject camera)
     {
-        throw new System.NotImplementedException();
+        
     }
 
     //This function will bring the GameObject to the specified Vector3 location.

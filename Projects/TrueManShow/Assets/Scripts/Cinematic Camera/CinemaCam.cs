@@ -138,8 +138,6 @@ public class CinemaCam : SerializedMonoBehaviour
             LerpingTransform.position = pos;
             CameraTransform.localRotation = camRot;
 
-            Debug.Log(closeEnoughCounter);
-
             yield return null;
         } while (closeEnoughCounter < CLOSE_ENOUGH_MAX);
 

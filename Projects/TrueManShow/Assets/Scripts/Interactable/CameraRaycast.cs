@@ -10,8 +10,9 @@ public class CameraRaycast : MonoBehaviour {
 	public float RaycastDist;
 	public Texture2D crosshairImage;
     public FirstPersonController FirstPerson;
+    public Transform SnappingPoint;
 
-    private GameObject interactedObject;
+    private Item interactedObject;
     private Item InteractableItem;
 
     RaycastHit hit;
@@ -41,44 +42,42 @@ public class CameraRaycast : MonoBehaviour {
             //Throws a ray and checks if we hit any object in the world
             if (Physics.Raycast(ray, out hit, RaycastDist))
             {
-
+                Item item = hit.collider.GetComponent<Item>();
                 //Checks what tag the object has
-                if (hit.collider.GetComponent<Item>())
+                if (item)
                 {
-
-                    hit.transform.GetComponent<cakeslice.Outline>().eraseRenderer = false;
+                    item.ItemOutline.eraseRenderer = false;
                     if (interactedObject != null)
-                        if (interactedObject != hit.collider.gameObject)
-                            interactedObject.GetComponent<cakeslice.Outline>().eraseRenderer = true;
+                        if (interactedObject != item)
+                            interactedObject.ItemOutline.eraseRenderer = true;
 
-                    interactedObject = hit.collider.gameObject;
+                    interactedObject = item;
 
-                    //Check if we are pressing the "E" key to interact 
+                    //Check if we are pressing the "interact" input to interact 
                     //and if the previous object as returned to the desired location
 
-                    if (Input.GetKeyDown("e"))
+                    if (Input.GetButtonDown("Interact"))
                     {
-                        InteractableItem = interactedObject.GetComponent<Item>();
+                        InteractableItem = item;
                         InteractableItem.StartInteract(hit.collider.gameObject, this.gameObject);
-                        hit.transform.GetComponent<cakeslice.Outline>().eraseRenderer = true;
+                        item.ItemOutline.eraseRenderer = true;
                         Interacting = true;
 
                     }
                 }
                 else if (interactedObject != null)
                 {
-
-                    interactedObject.transform.GetComponent<cakeslice.Outline>().eraseRenderer = true;
+                    interactedObject.ItemOutline.eraseRenderer = true;
                 }
             }
             else if (interactedObject != null)
             {
-                interactedObject.transform.GetComponent<cakeslice.Outline>().eraseRenderer = true;
+                interactedObject.ItemOutline.eraseRenderer = true;
             }
         }
         else
         {
-            Interacting = InteractableItem.InteractUpdate(interactedObject,this.gameObject);
+            Interacting = InteractableItem.InteractUpdate(interactedObject.gameObject,this.gameObject);
         }
     }
 }
