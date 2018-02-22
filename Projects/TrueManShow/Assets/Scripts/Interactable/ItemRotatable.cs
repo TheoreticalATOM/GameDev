@@ -42,7 +42,7 @@ public class ItemRotatable : Item
                 //Rotate the interacted object according to the mouse movement.
                 float h = Input.GetAxis("Mouse X") * speed;
                 float v = Input.GetAxis("Mouse Y") * speed;
-                interactedObject.transform.Rotate(v, h, 0);
+                interactedObject.transform.Rotate(v, h, 0, Space.World);
 
                 return true;
             }

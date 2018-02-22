@@ -15,7 +15,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] private float m_RunSpeed;
         [SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
         // [SerializeField] private float m_JumpSpeed;
-        // [SerializeField] private float m_StickToGroundForce;
+        [SerializeField] private float m_StickToGroundForce;
         // [SerializeField] private float m_GravityMultiplier;
         [SerializeField] public MouseLook MouseLook;
         [SerializeField] private bool m_UseFovKick;
@@ -106,6 +106,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
             m_MoveDir.x = desiredMove.x * speed;
             m_MoveDir.z = desiredMove.z * speed;
+            m_MoveDir.y = -m_StickToGroundForce;
+
 
             // if (m_CharacterController.isGrounded)
             // {
