@@ -3,7 +3,8 @@ using UnityEngine.Events;
 
 public class ItemApperance : Item
 {
-    public float Ratio;
+    public float objApp = 10f;
+    bool itemUsed = false;
     public DirectorAwarenessValue AppearanceVariable;
     public UnityEvent OnInteracted;
 
@@ -12,10 +13,15 @@ public class ItemApperance : Item
 
     protected override void OnStartInteract(GameObject Object, GameObject player)
     {
-        float objApp = 10f;
-        AppearanceVariable.UpdateValue(objApp);
-        print(AppearanceVariable.Value);
-
+        if (itemUsed == false)
+        {
+            AppearanceVariable.UpdateValue(objApp);
+            itemUsed = true;
+            if(gameObject.tag == "OneTime")
+            {
+                Destroy(gameObject);
+            }
+        }
         OnInteracted.Invoke();
     }
 
