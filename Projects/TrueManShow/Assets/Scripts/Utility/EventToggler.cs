@@ -13,7 +13,17 @@ public class EventToggler : MonoBehaviour
 	public void Toggle()
 	{
 		mToggle = !mToggle;
-		if(mToggle) A.Invoke();
-		else B.Invoke();
+		if(mToggle) ToggleA();
+		else ToggleB();
+	}
+
+	protected virtual void ToggleA()
+	{
+		A.Invoke();
+	}
+
+	protected virtual void ToggleB()
+	{
+		B.Invoke();
 	}
 }

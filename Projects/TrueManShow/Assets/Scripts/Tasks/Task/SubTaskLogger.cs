@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class SubTaskLogger : Task
+﻿public class SubTaskLogger : Task
 {
     public int NumberOfSubTasks;
     public int ActivatedSubTasks { get; private set; }

@@ -15,6 +15,7 @@ public abstract class Item : MonoBehaviour
     private void Awake()
     {
         ItemOutline = GetComponent<cakeslice.Outline>();
+        ItemOutline.eraseRenderer = true; // clear the renderer on the start
     }
 
 
