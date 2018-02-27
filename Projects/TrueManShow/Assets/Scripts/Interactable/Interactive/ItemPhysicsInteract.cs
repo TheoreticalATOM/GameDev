@@ -4,6 +4,8 @@ using UnityEngine;
 
 public abstract class ItemPhysicsInteract : ItemPhysics
 {
+    public bool IsEligible;
+
     public override bool InteractUpdate(GameObject interactedObject, GameObject player)
     {
         if (!base.InteractUpdate(interactedObject, player))
@@ -18,10 +20,18 @@ public abstract class ItemPhysicsInteract : ItemPhysics
         Collider.enabled = false;
     }
 
+    public void SetEligibility(bool state)
+    {
+        IsEligible = state;
+    }
+
     protected abstract bool OnInteract(GameObject player);
 
     protected bool TryAddToInventory(Collider inventoryObject)
     {
+        if(!IsEligible)
+            return false;
+
         InventoryVerifier inv = inventoryObject.GetComponent<InventoryVerifier>();
         return inv && inv.InsertItem(this);
     }

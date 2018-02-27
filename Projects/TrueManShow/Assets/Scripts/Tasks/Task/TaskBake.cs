@@ -1,14 +1,50 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class TaskBake : SubTaskLogger
 {
-    public bool IsOvenOn {get;set;}
+    public float WaitingDurationInSeconds;
 
+    public ItemInteract Door;
+    public ItemInteract Knob;
+    public GameObject Bowl;
+    public GameObject Cake;
+    public GameObject CakePlacementTrigger;
+    public UnityEvent CakeCompleteEvent;
 
-    public void ToggleOven()
+    private Coroutine mBakingDelayRoutine;
+
+    public bool IsDoorClosed { get; set; }
+    public bool HasCake { get; set; }
+
+    public void BakeCake()
     {
-		IsOvenOn = !IsOvenOn;
+        if (HasCake && IsDoorClosed)
+        {
+            if (mBakingDelayRoutine == null)
+                mBakingDelayRoutine = StartCoroutine(BakingDelay());
+        }
+    }
+
+    IEnumerator BakingDelay()
+    {
+        Door.CanBeInteractedWith = false;
+        Knob.CanBeInteractedWith = false;
+
+        HasCake = false;
+        Bowl.SetActive(false);
+        Cake.SetActive(true);
+        CakePlacementTrigger.SetActive(false);
+
+        yield return new WaitForSeconds(WaitingDurationInSeconds);
+
+        Door.CanBeInteractedWith = true;
+
+        Knob.CanBeInteractedWith = true;
+        Knob.OnInteracted.Invoke();
+
+        CakeCompleteEvent.Invoke();
     }
 }
