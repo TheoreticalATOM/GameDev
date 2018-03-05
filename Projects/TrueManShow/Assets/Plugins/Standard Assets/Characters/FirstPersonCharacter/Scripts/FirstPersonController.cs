@@ -31,6 +31,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [TabGroup("Audio"), MinMaxSlider(-3.0f, 3.0f, true)] public Vector2 MinMaxPitch;
         [TabGroup("Audio")] public AudioClip[] FootSteps;
 
+        public bool DisableControls;
+
         private Camera mCamera;
         private bool mJump;
         private float mYRotation;
@@ -61,6 +63,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // Update is called once per frame
         private void Update()
         {
+            if (DisableControls)
+                return;
             RotateView();
         }
 
@@ -71,6 +75,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void FixedUpdate()
         {
+            if (DisableControls)
+                return;
+
+
             float speed;
             GetInput(out speed);
             // always move along the camera forward as it is the direction that it being aimed at
