@@ -21,7 +21,8 @@ public class BowlFilling : SerializedMonoBehaviour
     private int mStepTarget;
     [SerializeField, HideInInspector] private StepDetails[] mSteps;
     private Coroutine mUpdateRoutine;
-
+    private System.Action mUpdateManualAction;
+    
     private Material mMaterial;
     private Color mAvgColour;
 
@@ -31,6 +32,8 @@ public class BowlFilling : SerializedMonoBehaviour
     {
         mMaterial = GetComponent<MeshRenderer>().material;
         mOrigPos = transform.localPosition;
+
+        mUpdateManualAction = () => {};
     }
 
     private void OnValidate()
@@ -78,6 +81,55 @@ public class BowlFilling : SerializedMonoBehaviour
         }
     }
 
+    public void SetAddBowlManual(Color targetColour, float transitionSpeed, System.Action CompletedCallback, bool clearSetOnCompletion = true)
+    {
+        mUpdateManualAction = () => BowlManualInsertion(targetColour, transitionSpeed, () =>
+        {
+            UpdateStepTarget();
+            CompletedCallback();
+
+            if(clearSetOnCompletion)
+                ClearAddBowlManual();
+        });
+    }
+
+    private void UpdateStepTarget()
+    {
+        mStepTarget = Mathf.Min(mStepTarget + 1, mSteps.Length - 1);
+    }
+
+    public void ClearAddBowlManual()
+    {
+        mUpdateManualAction = () => {};
+    }
+
+    private void BowlManualInsertion(Color targetColour, float transitionSpeed, System.Action CompletedCallback)
+    {
+        float dSpeed = Time.deltaTime * transitionSpeed;
+        Vector3 targetPos = mSteps[mStepTarget].Offset + mOrigPos;
+        // Set Position
+        Vector3 thisPos = transform.localPosition;
+        thisPos = Vector3.Slerp(thisPos, targetPos, dSpeed);
+        transform.localPosition = thisPos;
+
+        // Set Scale
+        Vector3 thisScale = transform.localScale;
+        thisScale = Vector3.Slerp(thisScale, mSteps[mStepTarget].Scale, dSpeed);
+        transform.localScale = thisScale;
+
+        // Set Material colour
+        mMaterial.color = Color.Lerp(mMaterial.color, targetColour, dSpeed);
+
+        // return if distance is close enough
+        if((thisPos - targetPos).sqrMagnitude < CloseEnoughDistance * CloseEnoughDistance)
+            CompletedCallback();
+    }
+
+    public void UpdateAddBowlManual()
+    {
+        mUpdateManualAction();
+    }
+
     public void AddToBowl(Color colour)
     {
         if (mUpdateRoutine != null)
@@ -86,7 +138,7 @@ public class BowlFilling : SerializedMonoBehaviour
         mAvgColour = (mAvgColour + colour) / 2.0f;
 
         mUpdateRoutine = StartCoroutine(UpdateRoutine(mSteps[mStepTarget], mAvgColour));
-        mStepTarget = Mathf.Min(mStepTarget + 1, mSteps.Length - 1);
+        UpdateStepTarget();
     }
 
     private IEnumerator UpdateRoutine(StepDetails details, Color colour)

@@ -1,15 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class Pouring : SerializedMonoBehaviour
+public class ItemPhysicsInteractPouring : ItemPhysicsInteract
 {
     public ParticleSystem Particles;
     public BowlFilling Bowl;
-	public Color BowlColourChange;
-	public float FillSpeed;
-
     public Vector3 ColliderOffset;
     public Vector3 ColliderSize;
     public LayerMask ColliderMask;
@@ -25,7 +19,7 @@ public class Pouring : SerializedMonoBehaviour
         Gizmos.DrawWireCube(ColliderOffset + particlePos, ColliderSize);
     }
 
-    void FixedUpdate()
+    protected override bool OnInteract(GameObject player)
     {
         Vector3 particlePos = Particles.transform.position;
         Vector3 towardsPoint = particlePos - transform.position;
@@ -34,7 +28,7 @@ public class Pouring : SerializedMonoBehaviour
         {
             Bowl.ClearAddBowlManual();
             Particles.Stop();
-            return;
+            return true;
         }
 
         // Play particle system
@@ -47,16 +41,18 @@ public class Pouring : SerializedMonoBehaviour
         if (mColliderBuffer[0] && !mIsPouringIntoBowl)
         {
             mIsPouringIntoBowl = true;
-            Bowl.SetAddBowlManual(BowlColourChange, FillSpeed, () =>
-            { 
-				Debug.Log("DONE!");
-				mIsPouringIntoBowl = false;
-			});
+            Bowl.SetAddBowlManual(Color.red, 1.0f, () =>
+            {                
+                mIsPouringIntoBowl = false;
+            });
         }
-        
-		if (mColliderBuffer[0])
+
+        if (mColliderBuffer[0])
         {
             Bowl.UpdateAddBowlManual();
         }
+
+
+        return true;
     }
 }
