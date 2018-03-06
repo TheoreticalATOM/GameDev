@@ -7,15 +7,21 @@ public class Pouring : SerializedMonoBehaviour
 {
     public ParticleSystem Particles;
     public BowlFilling Bowl;
-	public Color BowlColourChange;
-	public float FillSpeed;
+    public Color BowlColourChange;
+    public float FillSpeed;
 
     public Vector3 ColliderOffset;
     public Vector3 ColliderSize;
     public LayerMask ColliderMask;
 
     private Collider[] mColliderBuffer = new Collider[1];
-    private bool mIsPouringIntoBowl;
+    private bool mHasFinishedPouring;
+    private bool mHasStartedToPour;
+
+    private void Awake()
+    {
+        mHasFinishedPouring = mHasStartedToPour = false;
+    }
 
     private void OnDrawGizmos()
     {
@@ -44,19 +50,22 @@ public class Pouring : SerializedMonoBehaviour
         Vector3 boxPos = particlePos + ColliderOffset;
         Physics.OverlapBoxNonAlloc(boxPos, ColliderSize, mColliderBuffer, Quaternion.identity, ColliderMask);
 
-        if (mColliderBuffer[0] && !mIsPouringIntoBowl)
+        if (!mHasFinishedPouring && mColliderBuffer[0])
         {
-            mIsPouringIntoBowl = true;
-            Bowl.SetAddBowlManual(BowlColourChange, FillSpeed, () =>
-            { 
-				Debug.Log("DONE!");
-				mIsPouringIntoBowl = false;
-			});
-        }
-        
-		if (mColliderBuffer[0])
-        {
-            Bowl.UpdateAddBowlManual();
+            if (!mHasStartedToPour)
+            {
+                mHasStartedToPour = true;
+                Bowl.SetAddBowlManual(BowlColourChange, FillSpeed);
+            }
+            else if (Bowl.UpdateAddBowlManual())
+            {
+                InventoryVerifier inv = mColliderBuffer[0].GetComponent<InventoryVerifier>();
+                if (inv) inv.ExternalInsertItemNonReaction(gameObject);
+                
+                Debug.Log("Hello");
+                mHasFinishedPouring = true; 
+                mHasStartedToPour = false;
+            }
         }
     }
 }

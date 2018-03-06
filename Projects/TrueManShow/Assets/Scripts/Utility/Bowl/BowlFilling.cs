@@ -21,7 +21,7 @@ public class BowlFilling : SerializedMonoBehaviour
     private int mStepTarget;
     [SerializeField, HideInInspector] private StepDetails[] mSteps;
     private Coroutine mUpdateRoutine;
-    private System.Action mUpdateManualAction;
+    private System.Func<bool> mUpdateManualAction;
     
     private Material mMaterial;
     private Color mAvgColour;
@@ -33,7 +33,7 @@ public class BowlFilling : SerializedMonoBehaviour
         mMaterial = GetComponent<MeshRenderer>().material;
         mOrigPos = transform.localPosition;
 
-        mUpdateManualAction = () => {};
+        mUpdateManualAction = () => false;
     }
 
     private void OnValidate()
@@ -80,14 +80,11 @@ public class BowlFilling : SerializedMonoBehaviour
             };
         }
     }
-
-    public void SetAddBowlManual(Color targetColour, float transitionSpeed, System.Action CompletedCallback, bool clearSetOnCompletion = true)
+    public void SetAddBowlManual(Color targetColour, float transitionSpeed, bool clearSetOnCompletion = true)
     {
         mUpdateManualAction = () => BowlManualInsertion(targetColour, transitionSpeed, () =>
         {
             UpdateStepTarget();
-            CompletedCallback();
-
             if(clearSetOnCompletion)
                 ClearAddBowlManual();
         });
@@ -100,10 +97,10 @@ public class BowlFilling : SerializedMonoBehaviour
 
     public void ClearAddBowlManual()
     {
-        mUpdateManualAction = () => {};
+        mUpdateManualAction = () => false;
     }
 
-    private void BowlManualInsertion(Color targetColour, float transitionSpeed, System.Action CompletedCallback)
+    private bool BowlManualInsertion(Color targetColour, float transitionSpeed, System.Action onCompletionCallback)
     {
         float dSpeed = Time.deltaTime * transitionSpeed;
         Vector3 targetPos = mSteps[mStepTarget].Offset + mOrigPos;
@@ -121,13 +118,18 @@ public class BowlFilling : SerializedMonoBehaviour
         mMaterial.color = Color.Lerp(mMaterial.color, targetColour, dSpeed);
 
         // return if distance is close enough
-        if((thisPos - targetPos).sqrMagnitude < CloseEnoughDistance * CloseEnoughDistance)
-            CompletedCallback();
+        // Debug.Log((thisPos - targetPos).sqrMagnitude + " : " + (CloseEnoughDistance * CloseEnoughDistance));
+
+        bool isCloseEnough = (thisPos - targetPos).sqrMagnitude < CloseEnoughDistance * CloseEnoughDistance;
+        if(isCloseEnough)
+            onCompletionCallback();
+        
+        return isCloseEnough;
     }
 
-    public void UpdateAddBowlManual()
+    public bool UpdateAddBowlManual()
     {
-        mUpdateManualAction();
+        return mUpdateManualAction();
     }
 
     public void AddToBowl(Color colour)

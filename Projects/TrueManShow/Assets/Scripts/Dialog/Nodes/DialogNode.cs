@@ -35,6 +35,10 @@ public class DialogNode : SerializedScriptableObject
 
         source.Play(Segments, OnFinishedCallback);
     }
+    public void Play()
+    {
+        Play(null);
+    }
 
     #region Child Manipulation
     /// <summary>

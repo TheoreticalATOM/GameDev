@@ -43,6 +43,7 @@ public class InventoryVerifierMoveToPlace : InventoryVerifier
         if (isCloseEnough && hasRotatedEnough)
         {
             mItem.CorrectItemAdded.Invoke();
+            //mItem.TryHide();
             UpdateCount();
 
             mItem = null;

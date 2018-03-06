@@ -4,6 +4,7 @@ using UnityEngine;
 
 public abstract class ItemPhysicsInteract : ItemPhysics
 {
+    public bool IsUniversial;
     public bool IsEligible;
 
     public override bool InteractUpdate(GameObject interactedObject, GameObject player)

@@ -40,11 +40,7 @@ public class ItemPhysicsInteractPouring : ItemPhysicsInteract
 
         if (mColliderBuffer[0] && !mIsPouringIntoBowl)
         {
-            mIsPouringIntoBowl = true;
-            Bowl.SetAddBowlManual(Color.red, 1.0f, () =>
-            {                
-                mIsPouringIntoBowl = false;
-            });
+            
         }
 
         if (mColliderBuffer[0])

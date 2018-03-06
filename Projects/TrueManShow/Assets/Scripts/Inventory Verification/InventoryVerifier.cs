@@ -1,37 +1,81 @@
 ﻿using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
+using SDE;
 
 [System.Serializable]
 public class InventoryItem
 {
     [Header("Required Item:")]
     public ItemPhysicsInteract RequiredItem;
+    public IVReaction Reaction;
     public UnityEvent CorrectItemAdded;
 }
 
 public class InventoryVerifier : SerializedMonoBehaviour
 {
-    [TabGroup("Verifier")] public InventoryItem[] RequiredItems;
-    [TabGroup("Verifier")] public UnityEvent OnGotAllRequiredItems;
+    [TabGroup("Known")] public InventoryItem[] RequiredItems;
+    [TabGroup("Known")] public GameObject[] ExternalItems;
+    [TabGroup("Known")] public UnityEvent OnGotAllRequiredItems;
+
+    [TabGroup("Unknown")] public IVReaction DefaultReaction;
+    [TabGroup("Unknown")] public string RequiredTag;
+    [TabGroup("Unknown")] public UnityEvent OnAddedWrongItem;
+
     private int mCount = 0;
+
+    public void ExternalInsertItemNonReaction(GameObject referencedItem)
+    {
+        if (ExternalItems.Contains(referencedItem))
+        {
+            UpdateCount();
+            return;
+        }
+    }
+
+    public bool InsertAnyItemFailureInvoke(ItemPhysicsInteract insertedItem)
+    {
+        // if the game object does not have the required tag, then invoke the wrong item added
+        if (RequiredTag != string.Empty && !insertedItem.gameObject.CompareTag(RequiredTag))
+            OnAddedWrongItem.Invoke();
+
+        InventoryItem foundItem = RequiredItems.Find((item) => item.RequiredItem == insertedItem);
+        if (foundItem != null)
+        {
+            ReactToFoundItem(foundItem);
+        }
+        return true;
+    }
 
     public bool InsertItem(ItemPhysicsInteract insertedItem)
     {
-        foreach (InventoryItem item in RequiredItems)
+        InventoryItem foundItem = RequiredItems.Find((item) => item.RequiredItem == insertedItem);
+        if (foundItem != null)
         {
-            if (item.RequiredItem == insertedItem)
+            foundItem.Reaction.OnReact(insertedItem, () =>
             {
-                ReactToFoundItem(item);
-                return true;
-            }
+                foundItem.CorrectItemAdded.Invoke();
+                UpdateCount();
+            });
+            return true;
         }
+
+        if (insertedItem.IsUniversial && insertedItem.CompareTag(RequiredTag))
+        {
+            DefaultReaction.OnReact(insertedItem, () =>
+            {
+                OnAddedWrongItem.Invoke();
+            });
+            return true;
+        }
+
+
         return false;
     }
 
     protected void UpdateCount()
     {
-        if (++mCount >= RequiredItems.Length)
+        if (++mCount >= RequiredItems.Length + ExternalItems.Length)
             OnGotAllRequiredItems.Invoke();
     }
 
