@@ -27,17 +27,13 @@ namespace SDE
             }
         }
 
-        public static bool Contains<T>(this T[] list, T value)
-        {
-            foreach (T item in list)
-            {
-                if (item.Equals(value))
-                    return true;
-            }
-            return false;
-        }
-
         public delegate bool DelItemComparision<T>(T item);
+        public static bool Contains<T>(this T[] list, DelItemComparision<T> comparision) 
+        {
+            return Find<T>(list, comparision) != null;
+
+        }
+        
         public static T Find<T>(this T[] list, DelItemComparision<T> comparison)
         {
             foreach (T item in list)

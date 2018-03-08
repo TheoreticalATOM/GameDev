@@ -6,6 +6,7 @@ public abstract class ItemPhysicsInteract : ItemPhysics
 {
     public bool IsUniversial;
     public bool IsEligible;
+    public InventoryResponse Response;
 
     public override bool InteractUpdate(GameObject interactedObject, GameObject player)
     {
@@ -33,8 +34,11 @@ public abstract class ItemPhysicsInteract : ItemPhysics
         if(!IsEligible)
             return false;
 
-        InventoryVerifier inv = inventoryObject.GetComponent<InventoryVerifier>();
+        InteractiveInventory inv = inventoryObject.GetComponent<InteractiveInventory>();
         return inv && inv.InsertItem(this);
+
+        //InventoryVerifier inv = inventoryObject.GetComponent<InventoryVerifier>();
+        //return inv && inv.InsertItem(this);
     }
 
 

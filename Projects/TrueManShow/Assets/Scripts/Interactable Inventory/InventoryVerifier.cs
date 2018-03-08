@@ -19,26 +19,22 @@ public class InventoryVerifier : SerializedMonoBehaviour
     [TabGroup("Known")] public UnityEvent OnGotAllRequiredItems;
 
     [TabGroup("Unknown")] public IVReaction DefaultReaction;
-    [TabGroup("Unknown")] public string RequiredTag;
+    [TabGroup("Unknown")] public IVFallbackVerification FallbackVerification;
     [TabGroup("Unknown")] public UnityEvent OnAddedWrongItem;
 
     private int mCount = 0;
 
     public void ExternalInsertItemNonReaction(GameObject referencedItem)
     {
-        if (ExternalItems.Contains(referencedItem))
-        {
-            UpdateCount();
-            return;
-        }
+        // if (ExternalItems.Contains(referencedItem))
+        // {
+        //     UpdateCount();
+        //     return;
+        // }
     }
 
     public bool InsertAnyItemFailureInvoke(ItemPhysicsInteract insertedItem)
     {
-        // if the game object does not have the required tag, then invoke the wrong item added
-        if (RequiredTag != string.Empty && !insertedItem.gameObject.CompareTag(RequiredTag))
-            OnAddedWrongItem.Invoke();
-
         InventoryItem foundItem = RequiredItems.Find((item) => item.RequiredItem == insertedItem);
         if (foundItem != null)
         {
@@ -49,6 +45,8 @@ public class InventoryVerifier : SerializedMonoBehaviour
 
     public bool InsertItem(ItemPhysicsInteract insertedItem)
     {
+        /* Search for the item in the inventory.
+        If found, then use its set reaction, and react positvely */
         InventoryItem foundItem = RequiredItems.Find((item) => item.RequiredItem == insertedItem);
         if (foundItem != null)
         {
@@ -60,16 +58,15 @@ public class InventoryVerifier : SerializedMonoBehaviour
             return true;
         }
 
-        if (insertedItem.IsUniversial && insertedItem.CompareTag(RequiredTag))
+        /* if the item was not found, try to use the fallback verifier.
+        If the item passes the fallback verification, then use the default reaction and react negatively */
+        if(FallbackVerification.OnVerify(insertedItem))
         {
-            DefaultReaction.OnReact(insertedItem, () =>
-            {
-                OnAddedWrongItem.Invoke();
-            });
+            DefaultReaction.OnReact(insertedItem, () => OnAddedWrongItem.Invoke());
             return true;
         }
 
-
+        // if neither worked, return failure
         return false;
     }
 
