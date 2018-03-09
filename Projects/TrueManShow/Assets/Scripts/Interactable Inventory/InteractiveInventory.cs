@@ -12,7 +12,8 @@ public class InteractiveInventory : SerializedMonoBehaviour
 		int failCount = 0;
 		if(Verifier.Verify(item, ref failCount))
 		{
-			item.Response.Respond(failCount < 1);
+			InventoryResponse response = item.Response.GetResponse(this);
+			if(response) response.Respond(failCount < 1);
 			return true;
 		}
 		return false;

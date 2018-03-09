@@ -2,11 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Sirenix.OdinInspector;
+
 public abstract class ItemPhysicsInteract : ItemPhysics
 {
     public bool IsUniversial;
     public bool IsEligible;
-    public InventoryResponse Response;
+    [Required()] public ResponseCollection Response;
+
+    private Stack<System.Action> mRegisteredVerifications = new Stack<System.Action>();
+
+    public void RegisterVerificationChange(System.Action change)
+    {
+        mRegisteredVerifications.Push(change);
+    }
+
+    // ____________________________________________ Item Methods:
+    protected override void OnStartInteract(GameObject InteractedObject, GameObject player)
+    {
+        base.OnStartInteract(InteractedObject, player);
+
+        // if there are any registered verifications, then go through them all
+        while (mRegisteredVerifications.Count > 0)
+            mRegisteredVerifications.Pop()();
+    }
 
     public override bool InteractUpdate(GameObject interactedObject, GameObject player)
     {
@@ -16,10 +35,14 @@ public abstract class ItemPhysicsInteract : ItemPhysics
         return OnInteract(player);
     }
 
+    protected abstract bool OnInteract(GameObject player);
+
+
+    // _____________________________________________ Item Behaviour
     public void Disable()
     {
         InteractableRigidbody.isKinematic = true;
-        Collider.enabled = false;
+        //Collider.enabled = false;
     }
 
     public void SetEligibility(bool state)
@@ -27,41 +50,15 @@ public abstract class ItemPhysicsInteract : ItemPhysics
         IsEligible = state;
     }
 
-    protected abstract bool OnInteract(GameObject player);
 
     protected bool TryAddToInventory(Collider inventoryObject)
     {
-        if(!IsEligible)
+        if (!IsEligible)
             return false;
 
         InteractiveInventory inv = inventoryObject.GetComponent<InteractiveInventory>();
-        return inv && inv.InsertItem(this);
+        if(!inv) return false;
 
-        //InventoryVerifier inv = inventoryObject.GetComponent<InventoryVerifier>();
-        //return inv && inv.InsertItem(this);
+        return inv.InsertItem(this);
     }
-
-
-    // private bool Interacting;
-    // public float dist;
-    // private RaycastHit hit;
-
-    // public override bool InteractUpdate(GameObject interactedObject, GameObject player)
-    // {
-    //     bool Interacting = base.InteractUpdate(interactedObject, player);
-    //     if (Interacting)
-    //     {
-    //         if (Physics.Raycast(transform.position, Camera.main.transform.forward, out hit, dist))
-    //         {
-    //             InventoryVerifier inv = hit.collider.GetComponent<InventoryVerifier>();
-
-    //             if (inv)
-    //             {
-    //                 inv.InsertItem(this);
-    //                 Interacting = false;
-    //             }
-    //         }
-    //     }
-    //     return Interacting;
-    // }
 }
