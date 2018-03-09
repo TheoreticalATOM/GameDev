@@ -1,8 +1,9 @@
 ﻿public class ResponseCollectionAny : ResponseCollection
 {
-    public InventoryResponse Response;
-    public override InventoryResponse  GetResponse(InteractiveInventory inventory)
+    public ResponseDetails Details;
+
+    public override ResponseDetails GetResponseDetails(InteractiveInventory inventory)
     {
-        return Response;
+        return Details;
     }
 }

@@ -1,16 +1,23 @@
 ﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using Sirenix.OdinInspector;
 
-public abstract class IIReaction : MonoBehaviour 
+//[CreateAssetMenu(fileName = "IIReaction", menuName = "Inventory Interaction/", order = 0)]
+public abstract class IIReaction : SerializedScriptableObject
 {
 	public IIReaction Child;
-
-	public void React(ItemPhysicsInteract item, InventoryResponse response)
-	{
-		OnReact(item, response, () => 
-		{
-			if(Child) Child.React(item, response);
-		});
-	}
 	
-	protected abstract void OnReact(ItemPhysicsInteract item, InventoryResponse response, System.Action CompletedCallback);
+	protected abstract IEnumerator OnReactionRoutine(Transform target, ItemPhysicsInteract item, System.Action completedCallback); 
+
+	public void React(ItemPhysicsInteract item, Transform target, InteractiveInventory inventory, System.Action completedCallback)
+	{
+		inventory.StartCoroutine(OnReactionRoutine(target, item, () =>
+		{
+			if(Child)
+				Child.React(item, target, inventory, completedCallback);
+			else 
+				completedCallback();
+		}));
+	}
 }
