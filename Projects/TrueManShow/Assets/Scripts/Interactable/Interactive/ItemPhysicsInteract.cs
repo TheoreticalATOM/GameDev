@@ -6,7 +6,6 @@ using Sirenix.OdinInspector;
 
 public abstract class ItemPhysicsInteract : ItemPhysics
 {
-    public bool IsUniversial;
     public bool IsEligible;
     [Required()] public ResponseCollection Response;
 
@@ -30,7 +29,10 @@ public abstract class ItemPhysicsInteract : ItemPhysics
     public override bool InteractUpdate(GameObject interactedObject, GameObject player)
     {
         if (!base.InteractUpdate(interactedObject, player))
+        {
+            Enable();
             return false;
+        }
 
         return OnInteract(player);
     }
@@ -42,7 +44,12 @@ public abstract class ItemPhysicsInteract : ItemPhysics
     public void Disable()
     {
         InteractableRigidbody.isKinematic = true;
-        //Collider.enabled = false;
+        Collider.enabled = false;
+    }
+    public void Enable()
+    {
+        InteractableRigidbody.isKinematic = false;
+        Collider.enabled = true;
     }
 
     public void SetEligibility(bool state)

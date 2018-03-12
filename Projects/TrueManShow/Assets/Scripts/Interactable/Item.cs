@@ -12,12 +12,11 @@ public abstract class Item : MonoBehaviour
 
     public cakeslice.Outline ItemOutline { get; private set; }
 
-    private void Awake()
+    protected virtual void Awake()
     {
         ItemOutline = GetComponent<cakeslice.Outline>();
         ItemOutline.eraseRenderer = true; // clear the renderer on the start
     }
-
 
     public void StartInteract(GameObject Object, GameObject camera)
     {

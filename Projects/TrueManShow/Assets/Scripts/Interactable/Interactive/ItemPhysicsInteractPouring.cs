@@ -1,53 +1,25 @@
 using UnityEngine;
 
+[RequireComponent(typeof(PouringTrigger))]
 public class ItemPhysicsInteractPouring : ItemPhysicsInteract
 {
-    public ParticleSystem Particles;
-    public BowlFilling Bowl;
-    public Vector3 ColliderOffset;
-    public Vector3 ColliderSize;
-    public LayerMask ColliderMask;
+    private PouringTrigger mPouring;
+    private bool mIsPouring;
 
-    private Collider[] mColliderBuffer = new Collider[1];
-    private bool mIsPouringIntoBowl;
-
-    private void OnDrawGizmos()
+    protected override void Awake()
     {
-        Vector3 particlePos = Particles.transform.position;
-
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(ColliderOffset + particlePos, ColliderSize);
+        base.Awake();
+        mPouring = GetComponent<PouringTrigger>();
     }
 
     protected override bool OnInteract(GameObject player)
     {
-        Vector3 particlePos = Particles.transform.position;
-        Vector3 towardsPoint = particlePos - transform.position;
-
-        if (Mathf.Atan2(towardsPoint.y, towardsPoint.x) > 0.0f)
+        Collider col = mPouring.CollisionCheck();
+        if(col && !mIsPouring)
         {
-            Bowl.ClearAddBowlManual();
-            Particles.Stop();
-            return true;
+            InteractiveInventory inv = col.GetComponent<InteractiveInventory>();
+            //mIsPouring = inv.InsertItemStreamASync(this, );
         }
-
-        // Play particle system
-        Particles.Play();
-
-        // Check collision area if it hit a bowl
-        Vector3 boxPos = particlePos + ColliderOffset;
-        Physics.OverlapBoxNonAlloc(boxPos, ColliderSize, mColliderBuffer, Quaternion.identity, ColliderMask);
-
-        if (mColliderBuffer[0] && !mIsPouringIntoBowl)
-        {
-            
-        }
-
-        if (mColliderBuffer[0])
-        {
-            Bowl.UpdateAddBowlManual();
-        }
-
 
         return true;
     }

@@ -41,6 +41,8 @@ public class IIReactionMoveToPlace : IIReaction
 
             yield return null;
         } while (booleanCount < MAX_BOOLEAN_COUNT);
+
+        item.Collider.enabled = true;
 		completedCallback();
     }
 }

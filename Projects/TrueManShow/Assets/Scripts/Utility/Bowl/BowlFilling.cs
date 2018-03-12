@@ -80,6 +80,9 @@ public class BowlFilling : SerializedMonoBehaviour
             };
         }
     }
+
+    public float DistanceToTarget { get; private set; }
+
     public void SetAddBowlManual(Color targetColour, float transitionSpeed, bool clearSetOnCompletion = true)
     {
         mUpdateManualAction = () => BowlManualInsertion(targetColour, transitionSpeed, () =>
@@ -100,7 +103,7 @@ public class BowlFilling : SerializedMonoBehaviour
         mUpdateManualAction = () => false;
     }
 
-    private bool BowlManualInsertion(Color targetColour, float transitionSpeed, System.Action onCompletionCallback)
+    public bool BowlManualInsertion(Color targetColour, float transitionSpeed, System.Action onCompletionCallback)
     {
         float dSpeed = Time.deltaTime * transitionSpeed;
         Vector3 targetPos = mSteps[mStepTarget].Offset + mOrigPos;
@@ -119,10 +122,11 @@ public class BowlFilling : SerializedMonoBehaviour
 
         // return if distance is close enough
         // Debug.Log((thisPos - targetPos).sqrMagnitude + " : " + (CloseEnoughDistance * CloseEnoughDistance));
+        DistanceToTarget = (thisPos - targetPos).sqrMagnitude;
 
         bool isCloseEnough = (thisPos - targetPos).sqrMagnitude < CloseEnoughDistance * CloseEnoughDistance;
-        if(isCloseEnough)
-            onCompletionCallback();
+        // if(isCloseEnough)
+        //     onCompletionCallback();
         
         return isCloseEnough;
     }
@@ -145,7 +149,6 @@ public class BowlFilling : SerializedMonoBehaviour
 
     private IEnumerator UpdateRoutine(StepDetails details, Color colour)
     {
-        float distance = 0.0f;
         Vector3 targetPos = details.Offset + mOrigPos;
         do
         {
@@ -165,8 +168,8 @@ public class BowlFilling : SerializedMonoBehaviour
             mMaterial.color = Color.Lerp(mMaterial.color, colour, dSpeed);
 
             // check distance
-            distance = (thisPos - targetPos).sqrMagnitude;
+            DistanceToTarget = (thisPos - targetPos).sqrMagnitude;
             yield return null;
-        } while (distance > CloseEnoughDistance * CloseEnoughDistance);
+        } while (DistanceToTarget > CloseEnoughDistance * CloseEnoughDistance);
     }
 }

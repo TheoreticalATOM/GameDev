@@ -20,8 +20,10 @@ public class ItemPhysics : Item
     public Rigidbody InteractableRigidbody { get; private set; }
     public Collider Collider { get; private set; }
 
-    private void Start()
+    protected override void Awake()
     {
+        base.Awake();
+        
         InteractableRigidbody = GetComponent<Rigidbody>();
         Collider = GetComponent<Collider>();
 
