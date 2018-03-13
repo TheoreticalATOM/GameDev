@@ -13,60 +13,65 @@ public class InteractiveInventory : SerializedMonoBehaviour
         if (!item.IsEligible)
             return false;
 
-        int failCount;
-        if (VerifyItem(item, out failCount))
+        bool neverFailed;
+        if (VerifyItem(item, out neverFailed))
         {
-            ResponseDetails details = item.Response.GetResponseDetails(this);
-            InventoryResponse response = details.Response;
-            IIReaction reaction = details.Reaction;
-
-            bool hasFailed = failCount < 1;
-
-            if (reaction)
-                reaction.React(item, ReactionTarget, this, () => response.Respond(hasFailed));
-            else
-                response.Respond(hasFailed);
-
+            InsertWithoutVerification(item, neverFailed);
             return true;
         }
         return false;
     }
+
+    public void InsertWithoutVerification(ItemPhysicsInteract item, bool success)
+    {
+        ResponseDetails details = item.Response.GetResponseDetails(this);
+        InventoryResponse response = details.Response;
+        IIReaction reaction = details.Reaction;
+
+        if (reaction)
+            reaction.React(item, ReactionTarget, this, () => response.Respond(success));
+        else
+            response.Respond(success);
+    }
+
 
     public bool InsertItemStreamASync(ItemPhysicsInteract item, System.Func<bool> endStreamAction)
     {
         if (!item.IsEligible)
             return false;
 
-        int failCount;
-        if (VerifyItem(item, out failCount))
+        bool neverFailed;
+        if (VerifyItem(item, out neverFailed))
         {
             ResponseDetails details = item.Response.GetResponseDetails(this);
             InventoryResponse response = details.Response;
             IIReaction reaction = details.Reaction;
 
-            bool hasFailed = failCount < 1;
 
             if (reaction)
-                reaction.React(item, ReactionTarget, this, () => StartCoroutine(ItemInsertionStream(response, hasFailed, endStreamAction)));
+                reaction.React(item, ReactionTarget, this, () => StartCoroutine(ItemInsertionStream(response, neverFailed, endStreamAction)));
             else
-                StartCoroutine(ItemInsertionStream(response, hasFailed, endStreamAction));
+                StartCoroutine(ItemInsertionStream(response, neverFailed, endStreamAction));
         }
 
         return false;
     }
 
-    private bool VerifyItem(ItemPhysicsInteract item, out int failCount)
+
+    public bool VerifyItem(ItemPhysicsInteract item, out bool neverFailed)
     {
-        failCount = 0;
-        return Verifier.Verify(item, ref failCount);
+        int failCount = 0;
+        bool result = Verifier.Verify(item, ref failCount);
+        neverFailed = failCount < 1;
+        return result;
     }
 
     private IEnumerator ItemInsertionStream(InventoryResponse response, bool reactionSuccess, System.Func<bool> endStreamAction)
     {
-		while(!endStreamAction())
-		{
-			response.Respond(reactionSuccess);
-			yield return null;
-		}
+        while (!endStreamAction())
+        {
+            response.Respond(reactionSuccess);
+            yield return null;
+        }
     }
 }

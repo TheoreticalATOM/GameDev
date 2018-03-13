@@ -4,8 +4,10 @@ using UnityEngine;
 public class ItemPhysicsInteractPouring : ItemPhysicsInteract
 {
     private PouringTrigger mPouring;
-    private bool mIsPouring;
-
+    private InteractiveInventory mFoundInventory;
+    private bool mVerified;
+    private bool mSuccesfulState;
+    
     protected override void Awake()
     {
         base.Awake();
@@ -15,10 +17,14 @@ public class ItemPhysicsInteractPouring : ItemPhysicsInteract
     protected override bool OnInteract(GameObject player)
     {
         Collider col = mPouring.CollisionCheck();
-        if(col && !mIsPouring)
+        if(col && !mFoundInventory)
         {
-            InteractiveInventory inv = col.GetComponent<InteractiveInventory>();
-            //mIsPouring = inv.InsertItemStreamASync(this, );
+            mFoundInventory = col.GetComponent<InteractiveInventory>();
+            mVerified = mFoundInventory.VerifyItem(this, out mSuccesfulState);
+
+        } else if(mVerified && mFoundInventory)
+        {
+            mFoundInventory.InsertWithoutVerification(this, mSuccesfulState);
         }
 
         return true;
