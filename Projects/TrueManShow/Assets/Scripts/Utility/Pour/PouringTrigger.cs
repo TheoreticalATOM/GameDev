@@ -5,21 +5,21 @@ public class PouringTrigger : SerializedMonoBehaviour
 {
     public ParticleSystem Particles;
     //public BowlFilling Bowl;
-    public Color BowlColourChange;
-    public float FillSpeed;
+    // public Color BowlColourChange;
+    // public float FillSpeed;
 
     public Vector3 ColliderOffset;
     public Vector3 ColliderSize;
     public LayerMask ColliderMask;
 
     private Collider[] mColliderBuffer = new Collider[1];
-    private bool mHasFinishedPouring;
-    private bool mHasStartedToPour;
+    //private bool mHasFinishedPouring;
+    //private bool mHasStartedToPour;
 
-    private void Awake()
-    {
-        mHasFinishedPouring = mHasStartedToPour = false;
-    }
+    // private void Awake()
+    // {
+    //     mHasFinishedPouring = mHasStartedToPour = false;
+    // }
 
     private void OnDrawGizmos()
     {

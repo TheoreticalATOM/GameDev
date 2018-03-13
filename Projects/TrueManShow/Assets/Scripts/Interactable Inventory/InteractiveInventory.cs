@@ -47,7 +47,6 @@ public class InteractiveInventory : SerializedMonoBehaviour
             InventoryResponse response = details.Response;
             IIReaction reaction = details.Reaction;
 
-
             if (reaction)
                 reaction.React(item, ReactionTarget, this, () => StartCoroutine(ItemInsertionStream(response, neverFailed, endStreamAction)));
             else

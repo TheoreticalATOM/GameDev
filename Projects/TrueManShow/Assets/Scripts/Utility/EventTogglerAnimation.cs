@@ -17,6 +17,6 @@ public class EventTogglerAnimation : EventToggler
     protected override void ToggleB()
     {
         AnimationB.SetValue(Animator);
-        base.ToggleA();
+        base.ToggleB();
     }
 }

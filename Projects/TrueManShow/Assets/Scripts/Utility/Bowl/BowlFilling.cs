@@ -125,8 +125,8 @@ public class BowlFilling : SerializedMonoBehaviour
         DistanceToTarget = (thisPos - targetPos).sqrMagnitude;
 
         bool isCloseEnough = (thisPos - targetPos).sqrMagnitude < CloseEnoughDistance * CloseEnoughDistance;
-        // if(isCloseEnough)
-        //     onCompletionCallback();
+        if(isCloseEnough)
+            UpdateStepTarget();
         
         return isCloseEnough;
     }

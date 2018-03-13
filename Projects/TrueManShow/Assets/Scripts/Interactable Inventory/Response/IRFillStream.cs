@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class IRFillStream : InventoryResponse
 {
@@ -9,14 +10,15 @@ public class IRFillStream : InventoryResponse
     public float FillSpeed;
 
 	public bool CheckDistance {get;private set;}
+    public UnityEvent OnFilledEnough;
 
     protected override void OnFailResponse()
     {
-
     }
 
     protected override void OnSuccessResponse()
     {
-		CheckDistance = Bowl.BowlManualInsertion(ColourChange, FillSpeed, null);
+        if(Bowl.BowlManualInsertion(ColourChange, FillSpeed, null))
+            OnFilledEnough.Invoke();
     }
 }
