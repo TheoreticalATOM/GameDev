@@ -36,6 +36,7 @@ public class ItemThrowable : Item
                 {
                     interactedObject.GetComponent<Rigidbody>().useGravity = true;
                     interactedObject.GetComponent<Rigidbody>().AddForce(player.transform.forward * throwBar.GetComponent<HandleBar>().thrust);
+                    interactedObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
 
                     throwBar.ResetThrust();
                     Interacting = false;
@@ -45,7 +46,7 @@ public class ItemThrowable : Item
                 }
                 else
                 {
-                    if (!posReachIn)
+                    if (interactedObject.transform.position != SnapPoint.transform.position)
                     {
                         posReachIn = BringObject(interactedObject, SnapPoint.transform.position);
                     }
@@ -65,6 +66,7 @@ public class ItemThrowable : Item
     {
         Interacting = true;
         interactedObject.GetComponent<Rigidbody>().useGravity = false;
+        interactedObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
     }
 
     public override void StopInteract(GameObject Object, GameObject camera)
@@ -77,7 +79,7 @@ public class ItemThrowable : Item
     {
 
         Object.transform.position = Vector3.Lerp(Object.transform.position, TargetPosition, Time.deltaTime * smoothIn);
-        if (Object.transform.position == TargetPosition && Object.tag == "InteractableObject")
+        if (Object.transform.position == TargetPosition)
         {
             return true;
         }
