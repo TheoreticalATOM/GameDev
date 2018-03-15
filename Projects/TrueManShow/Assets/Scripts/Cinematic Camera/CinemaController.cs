@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
 
+using SDE;
+
 public class CinemaController : MonoBehaviour
 {
     [Header("Placement")]
@@ -15,6 +17,7 @@ public class CinemaController : MonoBehaviour
     [Header("Events")]
     public UnityEvent OnAnimationComplete;
     public UnityEvent OnAnimationStarted;
+    public UnityEvent OnAnimationKeyEvent;
 
     private void Awake()
     {
@@ -29,15 +32,20 @@ public class CinemaController : MonoBehaviour
     {
         Cinema.Transition(AnimationPlayPosition, AnimationDetail, ArrivedCallback);
     }
-
+    
     public void PlayAnimation(System.Action playedAnimationCallback)
     {
         OnAnimationStarted.Invoke();
         Cinema.PlayAnimation(AnimationDetail, () =>
         {
             OnAnimationComplete.Invoke();
-            playedAnimationCallback();   
-        });
+            if(playedAnimationCallback != null)
+                playedAnimationCallback();   
+        }, OnAnimationKeyEvent);
+    }
+    public void PlayAnimation()
+    {
+        PlayAnimation(null);
     }
 
     public void TransitionToTargetAndAnimate(System.Action ArrivedAndAnimatedCallback)
@@ -53,18 +61,5 @@ public class CinemaController : MonoBehaviour
     {
         if (action != null)
             action();
-    }
-
-    public void PlayTransitionAnimation()
-    {
-        // Cinema.PlayTransitionAnimation(AnimationDetail,
-        // () => OnAnimationComplete.Invoke(),
-        // AnimationPlayPosition, () => OnAnimationStarted.Invoke());
-    }
-    public void PlayAnimationTransition()
-    {
-        // Cinema.PlayAnimationTransition(AnimationDetail,
-        // () => OnAnimationComplete.Invoke(),
-        // AnimationPlayPosition, () => OnAnimationStarted.Invoke());
     }
 }

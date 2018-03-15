@@ -15,7 +15,9 @@ public class DialogNodeEvent : DialogNode
 		Assert.IsNotNull(OnNodeFinished, name + " is missing a game event");
 		base.Play(() =>
 		{
-			OnFinishedCallback();
+			if(OnFinishedCallback != null)
+				OnFinishedCallback();
+			
 			OnNodeFinished.Raise();
 		});
 	}

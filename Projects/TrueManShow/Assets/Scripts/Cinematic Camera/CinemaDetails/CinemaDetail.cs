@@ -13,7 +13,7 @@ public class CinemaDetail : ScriptableObject
 	public MovementRestriction Restriction;
 	public string AnimationVariable;
 	public Vector3 StartRotation;
-
+	
 	public virtual void SetValue(Animator animator)
 	{
 		animator.SetTrigger(AnimationVariable);

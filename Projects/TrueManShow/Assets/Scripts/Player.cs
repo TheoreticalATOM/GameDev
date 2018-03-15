@@ -14,16 +14,20 @@ public class Player : Resetable
     public CinemaCam CinematicCamera;
     public Camera Camera;
 
-	
-	private Quaternion mOrigLocalCamRot;
-	private Quaternion mOrigRot;
-	private Vector3 mOrigPos;
+    private Quaternion mOrigLocalCamRot;
+    private Quaternion mOrigRot;
+    private Vector3 mOrigPos;
 
     private void Awake()
     {
-		mOrigLocalCamRot = Camera.transform.localRotation;
-		mOrigPos = transform.position;
-		mOrigRot = transform.rotation;
+        mOrigLocalCamRot = Camera.transform.localRotation;
+        mOrigPos = transform.position;
+        mOrigRot = transform.rotation;
+    }
+
+    private void Start()
+    {
+        LockCamera();
     }
 
     public void LockCamera()
@@ -34,14 +38,14 @@ public class Player : Resetable
     public override void ResetObject()
     {
         Camera.transform.localRotation = mOrigLocalCamRot;
-		transform.rotation = mOrigRot;
-		transform.position = mOrigPos;
-		UnlockCamera();
+        transform.rotation = mOrigRot;
+        transform.position = mOrigPos;
+        UnlockCamera();
     }
 
     public void UnlockCamera()
     {
-        FirstPerson.ReInitializeMouseLook();
         FirstPerson.enabled = true;
+        FirstPerson.ReInitializeMouseLook();
     }
 }

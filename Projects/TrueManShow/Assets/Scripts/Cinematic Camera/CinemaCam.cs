@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityStandardAssets.Characters.FirstPerson;
 
 public class CinemaCam : SerializedMonoBehaviour
@@ -20,29 +21,31 @@ public class CinemaCam : SerializedMonoBehaviour
     // public CharacterController Controller;
 
     private System.Action mAnimationFinishedCallback;
+    private UnityEvent mAnimationKeyEvent;
 
-    public void PlayTransitionAnimation(CinemaDetail details, System.Action AnimationFinishedCallback, Transform target = null, System.Action TransitionFinishedCallback = null)
+    public void PlayTransitionAnimation(CinemaDetail details, System.Action AnimationFinishedCallback, UnityEvent onAnimationKeyEvent, Transform target = null, System.Action TransitionFinishedCallback = null)
     {
         if (Transition(target, details, () =>
         {
             TryCallCallback(TransitionFinishedCallback);
-            PlayAnimation(details, AnimationFinishedCallback);
+            PlayAnimation(details, AnimationFinishedCallback, onAnimationKeyEvent);
         }))
             return;
 
-        PlayAnimation(details, AnimationFinishedCallback);
+        PlayAnimation(details, AnimationFinishedCallback, onAnimationKeyEvent);
     }
-    public void PlayAnimationTransition(CinemaDetail details, System.Action animationFinishedCallback, Transform target = null, System.Action transitionFinishedCallback = null)
+    public void PlayAnimationTransition(CinemaDetail details, System.Action animationFinishedCallback, UnityEvent onAnimationKeyEvent, Transform target = null, System.Action transitionFinishedCallback = null)
     {
         PlayAnimation(details, () =>
         {
             TryCallCallback(animationFinishedCallback);
             Transition(target, details, transitionFinishedCallback);
-        });
+        }, onAnimationKeyEvent);
     }
 
-    public void PlayAnimation(CinemaDetail details, System.Action animationFinishedCallback)
+    public void PlayAnimation(CinemaDetail details, System.Action animationFinishedCallback, UnityEvent onAnimationKeyEvent)
     {
+        mAnimationKeyEvent = onAnimationKeyEvent;
         mAnimationFinishedCallback = () =>
         {
             // UnlockCamera();
@@ -72,6 +75,11 @@ public class CinemaCam : SerializedMonoBehaviour
         mAnimationFinishedCallback();
     }
 
+    public void TriggerLoggedKeyEvent()
+    {
+        mAnimationKeyEvent.Invoke();
+    }
+
     // public void LockCamera()
     // {
     //     FirstPerson.enabled = false;
@@ -87,7 +95,6 @@ public class CinemaCam : SerializedMonoBehaviour
 
     private void Start()
     {
-        CameraAnimator.applyRootMotion = true;
         //UnlockCamera();
     }
 
