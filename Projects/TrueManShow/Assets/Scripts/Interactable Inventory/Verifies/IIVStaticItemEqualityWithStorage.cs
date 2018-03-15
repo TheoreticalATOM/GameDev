@@ -1,19 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class IIVStaticItemEqualityWithStorage : IIVStaticItemEquality 
 {
 	public ItemPhysicsInteract CurrentlyStoredItem {get;private set;}
 
-	protected override bool OnVerifiying(ItemPhysicsInteract item)
+    public UnityEvent OnRemoved;
+
+    public UnityEvent OnItemAdded;
+
+    protected override bool OnVerifiying(ItemPhysicsInteract item)
 	{
 		bool result = base.OnVerifiying(item);
 		if(result && !CurrentlyStoredItem)
 		{
 			CurrentlyStoredItem = item;
 
-			item.RegisterVerificationChange(ClearStorage);
+            OnItemAdded.Invoke();
+
+
+            item.RegisterVerificationChange(ClearStorage);
 			return true;
 		}
 		return false;
@@ -22,5 +30,6 @@ public class IIVStaticItemEqualityWithStorage : IIVStaticItemEquality
 	public void ClearStorage()
 	{
 		CurrentlyStoredItem = null;
+        OnRemoved.Invoke();
 	}
 }
