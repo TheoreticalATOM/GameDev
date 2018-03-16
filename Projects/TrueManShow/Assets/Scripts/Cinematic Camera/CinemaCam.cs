@@ -20,6 +20,9 @@ public class CinemaCam : SerializedMonoBehaviour
     // public FirstPersonController FirstPerson;
     // public CharacterController Controller;
 
+    public UnityEvent OnControllerExecuted;
+    public UnityEvent OnControllerCompleted;
+
     private System.Action mAnimationFinishedCallback;
     private UnityEvent mAnimationKeyEvent;
 

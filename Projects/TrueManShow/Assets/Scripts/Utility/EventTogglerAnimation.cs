@@ -2,21 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(AnimationSwapper))]
 public class EventTogglerAnimation : EventToggler
 {
-    public Animator Animator;
-    public CinemaDetail AnimationA;
-    public CinemaDetail AnimationB;
+    private AnimationSwapper Animations;
+
+    private void Awake()
+    {
+        Animations = GetComponent<AnimationSwapper>();
+    }
 
     protected override void ToggleA()
     {
-        AnimationA.SetValue(Animator);
         base.ToggleA();
+        Animations.AnimateAndSwap();
     }
 
     protected override void ToggleB()
     {
-        AnimationB.SetValue(Animator);
         base.ToggleB();
+        Animations.AnimateAndSwap();
     }
 }

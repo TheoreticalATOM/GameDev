@@ -1,10 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
-
-using SDE;
 
 public class CinemaController : MonoBehaviour
 {
@@ -13,11 +9,12 @@ public class CinemaController : MonoBehaviour
     public Transform AnimationPlayPosition;
     public CinemaDetail AnimationDetail;
 
-
     [Header("Events")]
-    public UnityEvent OnAnimationComplete;
-    public UnityEvent OnAnimationStarted;
-    public UnityEvent OnAnimationKeyEvent;
+    public UnityEvent OnControllerComplete;
+    public UnityEvent OnControllerStarted;
+    //public UnityEvent OnAnimationKeyEvent;
+
+    private CinematicControllerComponent[] mCinemaComponents;
 
     private void Awake()
     {
@@ -26,6 +23,24 @@ public class CinemaController : MonoBehaviour
             Cinema = Camera.main.GetComponent<CinemaCam>();
             Assert.IsNotNull(Cinema, name + " : is missing a CinemaCam!");
         }
+        mCinemaComponents = GetComponents<CinematicControllerComponent>();
+    }
+
+    public void Execute()
+    {
+        OnControllerStarted.Invoke();
+        RecursiveExecution(0);
+    }
+
+    public void RecursiveExecution(int index)
+    {
+        if(index >= mCinemaComponents.Length)
+        {
+            OnControllerComplete.Invoke();
+            return;
+        }
+
+        mCinemaComponents[index].Respond(Cinema, () => RecursiveExecution(++index));
     }
 
     public void TransitionToTarget(System.Action ArrivedCallback)
@@ -35,10 +50,10 @@ public class CinemaController : MonoBehaviour
     
     public void PlayAnimation(System.Action playedAnimationCallback)
     {
-        OnAnimationStarted.Invoke();
+        OnControllerStarted.Invoke();
         Cinema.PlayAnimation(AnimationDetail, () =>
         {
-            OnAnimationComplete.Invoke();
+            OnControllerComplete.Invoke();
             if(playedAnimationCallback != null)
                 playedAnimationCallback();   
         }, OnAnimationKeyEvent);
