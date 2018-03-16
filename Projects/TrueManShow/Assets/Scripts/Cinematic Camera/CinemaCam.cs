@@ -6,175 +6,61 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityStandardAssets.Characters.FirstPerson;
 
+using SDE;
+
 public class CinemaCam : SerializedMonoBehaviour
 {
     [Header("Transition")]
     public float TransitionSpeed = 10.0f;
-    public float CloseEnoughDistance = 0.2f;
-    public float RotatedEnough = 0.2f;
     public Transform LerpingTransform;
     public Transform CameraTransform;
 
     [Header("Animation and Restriction")]
     public Animator CameraAnimator;
-    // public FirstPersonController FirstPerson;
-    // public CharacterController Controller;
 
-    public UnityEvent OnControllerExecuted;
-    public UnityEvent OnControllerCompleted;
+    public UnityEvent OnLocked;
+    public UnityEvent OnUnlocked;
 
-    private System.Action mAnimationFinishedCallback;
-    private UnityEvent mAnimationKeyEvent;
-
-    public void PlayTransitionAnimation(CinemaDetail details, System.Action AnimationFinishedCallback, UnityEvent onAnimationKeyEvent, Transform target = null, System.Action TransitionFinishedCallback = null)
+    private Stack<UnityEvent> mKeyEvents;
+    private Stack<System.Action> mAnimationCompleteEvents;
+    
+    // _______________________________________________________
+    // @ Locking
+    public void LockCamera()
     {
-        if (Transition(target, details, () =>
-        {
-            TryCallCallback(TransitionFinishedCallback);
-            PlayAnimation(details, AnimationFinishedCallback, onAnimationKeyEvent);
-        }))
-            return;
-
-        PlayAnimation(details, AnimationFinishedCallback, onAnimationKeyEvent);
+        OnLocked.Invoke();
     }
-    public void PlayAnimationTransition(CinemaDetail details, System.Action animationFinishedCallback, UnityEvent onAnimationKeyEvent, Transform target = null, System.Action transitionFinishedCallback = null)
+    public void UnlockCamera()
     {
-        PlayAnimation(details, () =>
-        {
-            TryCallCallback(animationFinishedCallback);
-            Transition(target, details, transitionFinishedCallback);
-        }, onAnimationKeyEvent);
+        OnUnlocked.Invoke();
     }
 
-    public void PlayAnimation(CinemaDetail details, System.Action animationFinishedCallback, UnityEvent onAnimationKeyEvent)
-    {
-        mAnimationKeyEvent = onAnimationKeyEvent;
-        mAnimationFinishedCallback = () =>
-        {
-            // UnlockCamera();
-            CameraAnimator.applyRootMotion = true;
-            animationFinishedCallback();
-            // Controller.enabled = !details.LockMovementOnCompletion;
-            // FirstPerson.IsWalking = false;
-        };
-
-        // LockCamera();
-        CameraAnimator.applyRootMotion = false;
-        details.SetValue(CameraAnimator);
-    }
-
-    public bool Transition(Transform target, CinemaDetail details, System.Action transitionFinishedCallback)
-    {
-        if (target)
-        {
-            StartCoroutine(MoveToTarget(target, details, transitionFinishedCallback));
-            return true;
-        }
-        return false;
-    }
-
+    // _______________________________________________________
+    // @ Events
     public void RegisterAnimationCompletion()
     {
-        mAnimationFinishedCallback();
+        mAnimationCompleteEvents.PopAll(popped => popped.Invoke());
     }
 
-    public void TriggerLoggedKeyEvent()
+    public void RegisterKeyEvent()
     {
-        mAnimationKeyEvent.Invoke();
+        mKeyEvents.PopAll(popped => popped.Invoke());
     }
 
-    // public void LockCamera()
-    // {
-    //     FirstPerson.enabled = false;
-    //     CameraAnimator.applyRootMotion = false;
-    // }
-
-    // public void UnlockCamera()
-    // {
-    //     FirstPerson.ReInitializeMouseLook();
-    //     FirstPerson.enabled = true;
-    //     CameraAnimator.applyRootMotion = true;
-    // }
-
-    private void Start()
+    // + Adding Event Triggers
+    public void AddKeyEventTrigger(UnityEvent e)
     {
-        //UnlockCamera();
+        mKeyEvents.Push(e);
     }
 
-    private IEnumerator MoveToTarget(Transform target, CinemaDetail details, System.Action callback)
+    public void AddAnimationCompleteTrigger(System.Action e)
     {
-        // Controller.enabled = false;
-
-        // FirstPerson.enabled = false;
-        CameraAnimator.applyRootMotion = true;
-
-        Vector3 targetPos = target.position;
-        Quaternion targetRot = target.rotation;
-        MovementRestriction restriction = details.Restriction;
-
-        Quaternion targetCamRot = Quaternion.Euler(details.StartRotation);
-
-        Vector3 distance = Vector3.zero;
-
-        // used for incrementally check if all the close enough values are valid
-        const int CLOSE_ENOUGH_MAX = 3;
-        int closeEnoughCounter = 0;
-        do
-        {
-            closeEnoughCounter = 0;
-
-            Vector3 pos = LerpingTransform.position;
-            Quaternion rot = LerpingTransform.rotation;
-            Quaternion camRot = CameraTransform.localRotation;
-
-            float dSpeed = TransitionSpeed * Time.deltaTime;
-
-            // Movement
-            TryLerpValue(ref pos.x, ref distance.x, targetPos.x, dSpeed, restriction, MovementRestriction.PX);
-            TryLerpValue(ref pos.y, ref distance.y, targetPos.y, dSpeed, restriction, MovementRestriction.PY);
-            TryLerpValue(ref pos.z, ref distance.z, targetPos.z, dSpeed, restriction, MovementRestriction.PZ);
-            ValidateBoolCounter(ref closeEnoughCounter, distance.sqrMagnitude < (CloseEnoughDistance * CloseEnoughDistance));
-
-            // Rotation
-            rot = Quaternion.Slerp(rot, targetRot, dSpeed);
-            ValidateBoolCounter(ref closeEnoughCounter, Quaternion.Angle(rot, targetRot) < RotatedEnough);
-
-            // Camera Rotation
-            camRot = Quaternion.Slerp(camRot, targetCamRot, dSpeed);
-            ValidateBoolCounter(ref closeEnoughCounter, Quaternion.Angle(camRot, targetCamRot) < RotatedEnough);
-
-            // Set the values
-            LerpingTransform.rotation = rot;
-            LerpingTransform.position = pos;
-            CameraTransform.localRotation = camRot;
-
-            yield return null;
-        } while (closeEnoughCounter < CLOSE_ENOUGH_MAX);
-
-        //Controller.enabled = !details.LockMovementOnCompletion;
-        CameraAnimator.applyRootMotion = true;
-        //UnlockCamera();
-        callback();
+        mAnimationCompleteEvents.Push(e);
     }
 
-    private void TryLerpValue(ref float value, ref float distance, float target, float speed, MovementRestriction restriction, MovementRestriction targetRestriction)
+    private void Awake()
     {
-        if ((restriction & targetRestriction) != targetRestriction)
-        {
-            value = Mathf.Lerp(value, target, speed);
-            distance = value - target;
-        }
-    }
-
-
-    private void ValidateBoolCounter(ref int counter, bool result)
-    {
-        counter = (result) ? ++counter : --counter;
-    }
-
-    private void TryCallCallback(System.Action action)
-    {
-        if (action != null)
-            action();
+        mKeyEvents = new Stack<UnityEvent>();
+        mAnimationCompleteEvents = new Stack<System.Action>();
     }
 }

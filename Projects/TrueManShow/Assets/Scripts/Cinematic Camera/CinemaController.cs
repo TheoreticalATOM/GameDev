@@ -2,15 +2,23 @@
 using UnityEngine.Assertions;
 using UnityEngine.Events;
 
+[System.Flags]
+public enum ECameraLocking
+{
+    NONE = 0, CAMERA, ROOT_MOTION
+}
+
 public class CinemaController : MonoBehaviour
 {
     [Header("Placement")]
     public CinemaCam Cinema;
-    public Transform AnimationPlayPosition;
-    public CinemaDetail AnimationDetail;
+    //public Transform AnimationPlayPosition;
+    //public CinemaDetail AnimationDetail;
+
+    public ECameraLocking Locking;
+    public ECameraLocking Unlocking;
 
     [Header("Events")]
-    public UnityEvent OnControllerComplete;
     public UnityEvent OnControllerStarted;
     //public UnityEvent OnAnimationKeyEvent;
 
@@ -28,6 +36,7 @@ public class CinemaController : MonoBehaviour
 
     public void Execute()
     {
+        CameraLockState(Locking, true);
         OnControllerStarted.Invoke();
         RecursiveExecution(0);
     }
@@ -36,45 +45,56 @@ public class CinemaController : MonoBehaviour
     {
         if(index >= mCinemaComponents.Length)
         {
-            OnControllerComplete.Invoke();
+            CameraLockState(Unlocking, false);
             return;
         }
-
         mCinemaComponents[index].Respond(Cinema, () => RecursiveExecution(++index));
     }
 
-    public void TransitionToTarget(System.Action ArrivedCallback)
+    private void CameraLockState(ECameraLocking direction, bool value)
     {
-        Cinema.Transition(AnimationPlayPosition, AnimationDetail, ArrivedCallback);
-    }
-    
-    public void PlayAnimation(System.Action playedAnimationCallback)
-    {
-        OnControllerStarted.Invoke();
-        Cinema.PlayAnimation(AnimationDetail, () =>
+        if((direction & ECameraLocking.CAMERA) == ECameraLocking.CAMERA)
         {
-            OnControllerComplete.Invoke();
-            if(playedAnimationCallback != null)
-                playedAnimationCallback();   
-        }, OnAnimationKeyEvent);
-    }
-    public void PlayAnimation()
-    {
-        PlayAnimation(null);
+            if(value) Cinema.LockCamera();
+            else Cinema.UnlockCamera();
+        }
+
+        if((direction & ECameraLocking.ROOT_MOTION) == ECameraLocking.ROOT_MOTION)
+            Cinema.CameraAnimator.applyRootMotion = !value;
     }
 
-    public void TransitionToTargetAndAnimate(System.Action ArrivedAndAnimatedCallback)
-    {
-        TransitionToTarget(() => PlayAnimation(() => TryCallCallback(ArrivedAndAnimatedCallback)));
-    }
-    public void AnimateAndTransitionToTarget(System.Action AnimatedAndArrivedCallback)
-    {
-        PlayAnimation(() => TransitionToTarget(() => TryCallCallback(AnimatedAndArrivedCallback)));
-    }
+    // public void TransitionToTarget(System.Action ArrivedCallback)
+    // {
+    //     Cinema.Transition(AnimationPlayPosition, AnimationDetail, ArrivedCallback);
+    // }
+    
+    // public void PlayAnimation(System.Action playedAnimationCallback)
+    // {
+    //     OnControllerStarted.Invoke();
+    //     Cinema.PlayAnimation(AnimationDetail, () =>
+    //     {
+    //         OnControllerComplete.Invoke();
+    //         if(playedAnimationCallback != null)
+    //             playedAnimationCallback();   
+    //     }, OnAnimationKeyEvent);
+    // }
+    // public void PlayAnimation()
+    // {
+    //     PlayAnimation(null);
+    // }
 
-    private static void TryCallCallback(System.Action action)
-    {
-        if (action != null)
-            action();
-    }
+    // public void TransitionToTargetAndAnimate(System.Action ArrivedAndAnimatedCallback)
+    // {
+    //     TransitionToTarget(() => PlayAnimation(() => TryCallCallback(ArrivedAndAnimatedCallback)));
+    // }
+    // public void AnimateAndTransitionToTarget(System.Action AnimatedAndArrivedCallback)
+    // {
+    //     PlayAnimation(() => TransitionToTarget(() => TryCallCallback(AnimatedAndArrivedCallback)));
+    // }
+
+    // private static void TryCallCallback(System.Action action)
+    // {
+    //     if (action != null)
+    //         action();
+    // }
 }
