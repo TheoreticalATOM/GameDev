@@ -28,26 +28,25 @@ public class SitDown : MonoBehaviour
 
     public void SitDownOnObject()
     {
-        Player.Controller.enabled = false;
-        Player.FirstPerson.enabled = false;
+        // Player.Controller.enabled = false;
+        // Player.FirstPerson.enabled = false;
 
-        SittingController.TransitionToTargetAndAnimate(() => 
-		{
-			Player.Controller.enabled = !LockMovement;
-			Player.FirstPerson.ReInitializeMouseLook();
-			Player.FirstPerson.enabled = !LockView;
-			enabled = true;
-		});
+        // SittingController.TransitionToTargetAndAnimate(() => 
+		// {
+		// 	Player.Controller.enabled = !LockMovement;
+		// 	Player.FirstPerson.ReInitializeMouseLook();
+		// 	Player.FirstPerson.enabled = !LockView;
+		// 	enabled = true;
+		// });
     }
 
     public void SitUp()
     {
-        SittingUpController.AnimateAndTransitionToTarget(() =>
-        {
-            Player.Controller.enabled = true;
-			Player.FirstPerson.ReInitializeMouseLook();			
-            Player.FirstPerson.enabled = true;
-        });
-
+        // SittingUpController.AnimateAndTransitionToTarget(() =>
+        // {
+        //     Player.Controller.enabled = true;
+		// 	Player.FirstPerson.ReInitializeMouseLook();			
+        //     Player.FirstPerson.enabled = true;
+        // });
     }
 }

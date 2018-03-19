@@ -4,6 +4,16 @@ namespace SDE
 {
     public static class CSharpExtensions
     {
+        // _________________________________________________
+        // Actions
+        public static void TryInvoke(this System.Action action)
+        {
+            if (action != null)
+                action();
+        }
+
+        // _________________________________________________
+        // Queues
         /// <summary>
         /// Will dequeue an item and enqueue it again, moving the front most item to the back
         /// </summary>
@@ -15,6 +25,16 @@ namespace SDE
             return value;
         }
 
+        // _________________________________________________
+        // Stacks
+        public static void PopAll<T>(this Stack<T> stack, System.Action<T> AfterPop)
+        {
+            while (stack.Count > 0)
+                AfterPop(stack.Pop());
+        }
+
+        // _________________________________________________
+        // Arrays
         public static void Shuffle<T>(this T[] list, System.Random rng)
         {
             int n = list.Length;
@@ -28,12 +48,11 @@ namespace SDE
         }
 
         public delegate bool DelItemComparision<T>(T item);
-        public static bool Contains<T>(this T[] list, DelItemComparision<T> comparision) 
+        public static bool Contains<T>(this T[] list, DelItemComparision<T> comparision)
         {
             return Find<T>(list, comparision) != null;
 
         }
-        
         public static T Find<T>(this T[] list, DelItemComparision<T> comparison)
         {
             foreach (T item in list)
@@ -43,5 +62,7 @@ namespace SDE
             }
             return default(T);
         }
+
+
     }
 }
