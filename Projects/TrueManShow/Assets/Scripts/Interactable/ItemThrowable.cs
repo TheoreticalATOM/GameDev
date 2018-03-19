@@ -35,6 +35,7 @@ public class ItemThrowable : Item
                 if (throwBar.thrust != 0)
                 {
                     interactedObject.GetComponent<Rigidbody>().useGravity = true;
+                    interactedObject.GetComponent<cakeslice.Outline>().eraseRenderer = true;
                     interactedObject.GetComponent<Rigidbody>().AddForce(player.transform.forward * throwBar.GetComponent<HandleBar>().thrust);
                     interactedObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
 

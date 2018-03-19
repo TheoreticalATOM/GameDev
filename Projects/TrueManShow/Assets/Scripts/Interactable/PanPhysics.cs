@@ -20,15 +20,23 @@ public class PanPhysics : Item
     public Rigidbody InteractableRigidbody { get; private set; }
     public Collider Collider { get; private set; }
 
-    private void Start()
+    private float DistPlaytoSnap;
+
+
+        private void Start()
     {
         InteractableRigidbody = GetComponent<Rigidbody>();
         Collider = GetComponent<Collider>();
+        DistPlaytoSnap = Vector3.Distance(SnapPoint.transform.position, Player.transform.position);
     }
 
 
     public override bool InteractUpdate(GameObject interactedObject, GameObject player)
     {
+        Vector3 forward = transform.TransformDirection(Vector3.forward) * 10;
+        Debug.DrawRay(transform.position, forward, Color.green);
+        //var rotation = Quaternion.LookRotation();
+        //transform.LookAt(SnapPoint.transform);
         //Bring the interacted object close to the camera
         if (Input.GetKeyDown("e"))
         {
@@ -48,20 +56,27 @@ public class PanPhysics : Item
                 
             if (Input.GetButton("Fire1"))
             {
-                    var rotationVector = transform.rotation.eulerAngles;
+                var rotationVector = transform.rotation.eulerAngles;
+                if(Vector3.Distance( this.transform.position, Player.transform.position) > DistPlaytoSnap)
+                {
                     rotationVector.z = MaxRot * (Vector3.Distance(SnapPoint.transform.position, this.transform.position) / MaxDistOut);
-                    this.transform.rotation = Quaternion.Euler(rotationVector);
-                    //Rotate the interacted object according to the mouse movement.
-                    float h = Input.GetAxis("Mouse X") * 0.1f;
-                    float v = Input.GetAxis("Mouse Y") * 0.1f;
-                    //NewPosition.Set(Player.transform.forward.x + v, Player.transform.forward.y + h, Player.transform.forward.z);
-                    NewPosition.Set(interactedObject.transform.position.x + Player.transform.forward.x * v, interactedObject.transform.position.y + h, interactedObject.transform.position.z + Player.transform.forward.z * v);
-                    if (MaxDistOut >= Vector3.Distance(SnapPoint.transform.position, NewPosition))
-                    {
-                        bool pos = BringObject(interactedObject, NewPosition);
-                        //NewPosition.Set(interactedObject.transform.position.x + v, interactedObject.transform.position.y + h, interactedObject.transform.position.z);
-                        //InteractableRigidbody.MovePosition(NewPosition);
-                    }
+                }
+                else
+                {
+                    rotationVector.z = -MaxRot * (Vector3.Distance(SnapPoint.transform.position, this.transform.position) / MaxDistOut);
+                }
+                this.transform.rotation = Quaternion.Lerp(this.transform.rotation,Quaternion.Euler(rotationVector),1f);
+                //Rotate the interacted object according to the mouse movement.
+                float h = Input.GetAxis("Mouse X") * 0.1f;
+                float v = Input.GetAxis("Mouse Y") * 0.1f;
+                //NewPosition.Set(Player.transform.forward.x + v, Player.transform.forward.y + h, Player.transform.forward.z);
+                NewPosition.Set(interactedObject.transform.position.x + Player.transform.forward.x * v, interactedObject.transform.position.y + h, interactedObject.transform.position.z + Player.transform.forward.z * v);
+                if (MaxDistOut >= Vector3.Distance(SnapPoint.transform.position, NewPosition))
+                {
+                    bool pos = BringObject(interactedObject, NewPosition);
+                    //NewPosition.Set(interactedObject.transform.position.x + v, interactedObject.transform.position.y + h, interactedObject.transform.position.z);
+                    //InteractableRigidbody.MovePosition(NewPosition);
+                }
             }
             else if(Input.GetKeyUp(KeyCode.Mouse0))
             {
