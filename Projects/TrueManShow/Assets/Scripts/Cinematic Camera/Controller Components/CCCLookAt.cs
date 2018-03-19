@@ -23,51 +23,15 @@ public class CCCLookAt : CinematicControllerComponent
 
     public override void Respond(CinemaCam camera, Action onCompletedCallback)
     {
-        StartCoroutine(mRoutineAction(camera, onCompletedCallback));
-    }
-
-    private Quaternion EulerToQuaternion(Vector3 sumTarget, Vector3 limiter)
-    {
-        Vector3 targetCam = sumTarget;
-        targetCam *= limiter.x;
-        targetCam *= limiter.y;
-        targetCam *= limiter.z;
-        return Quaternion.Euler(targetCam);
+        StartCoroutine(LookAtRoutine(camera, onCompletedCallback));
     }
 
     private IEnumerator LookAtRoutineStatic(CinemaCam camera, Action onCompletedCallback)
     {
         Transform camTrans = camera.CameraTransform.transform;
-        Transform actorTrans = camera.LerpingTransform.transform;
 
         Quaternion targetRot = Quaternion.LookRotation(LookAtTarget.position - camTrans.position);
-
-        //Quaternion targetCam = EulerToQuaternion(sumTarget, Vector3.one);
-        //Quaternion targetActor = EulerToQuaternion(sumTarget, Vector3.up);
-
         Quaternion camRot = camTrans.rotation;
-        //Quaternion actorRot = actorTrans.localRotation;
-
-        // const int MAX_BOOL_COUNT = 1;
-        // int boolCount = 0;
-        // do
-        // {
-        //     boolCount = 0;
-        //     float dSpeed = TransitionSpeed * Time.deltaTime;
-
-        //     camRot = Quaternion.RotateTowards(camRot, actorRot, dSpeed);
-        //     camTrans.rotation = camRot;
-        //     if (IsCloseEnough(ref camRot, ref targetCam)) boolCount++;
-
-        //     Debug.Log("hello");
-
-        //     // UpdateRotation(ref actorRot, targetActor);
-        //     // actorTrans.localRotation = actorRot;
-        //     // if(IsCloseEnough(ref actorRot, ref targetActor)) boolCount++;
-
-        //     yield return null;
-        // } while (boolCount < MAX_BOOL_COUNT);
-
         while (!IsCloseEnough(ref camRot, ref targetRot))
         {
             // slerp the rotation
@@ -82,9 +46,8 @@ public class CCCLookAt : CinematicControllerComponent
 
     private IEnumerator LookAtRoutine(CinemaCam camera, Action onCompletedCallback)
     {
-        Transform camTrans = camera.transform;
-        Quaternion camRot = Quaternion.identity;
-        Quaternion targetRot = Quaternion.identity;
+        Transform camTrans = camera.CameraTransform.transform;
+        Quaternion camRot, targetRot;
         do
         {
             targetRot = Quaternion.LookRotation(LookAtTarget.position - camTrans.position);
@@ -95,6 +58,7 @@ public class CCCLookAt : CinematicControllerComponent
 
             yield return null;
         } while (!IsCloseEnough(ref camRot, ref targetRot));
+        
         // Upon completion, call the callback
         Complete(onCompletedCallback);
     }

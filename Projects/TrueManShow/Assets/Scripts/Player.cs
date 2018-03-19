@@ -27,34 +27,33 @@ public class Player : Resetable
 
     private void Start()
     {
-        LockCamera();
-        LockMovement();
+        Lock(true);
     }
 
-    public void LockCamera()
+    public void LockCamera(bool value)
     {
-        FirstPerson.DisableCamera = true;
+        FirstPerson.DisableCamera = value;
+        if (!value)
+            FirstPerson.ReInitializeMouseLook();
     }
-    public void LockMovement()
+    public void LockMovement(bool value)
     {
-        FirstPerson.DisableMovement = true;
+        FirstPerson.DisableMovement = value;
     }
+    public void Lock(bool value)
+    {
+        LockCamera(value);
+        LockMovement(value);
+    }
+
+
+    
 
     public override void ResetObject()
     {
         Camera.transform.localRotation = mOrigLocalCamRot;
         transform.rotation = mOrigRot;
         transform.position = mOrigPos;
-        UnlockCamera();
-    }
-
-    public void UnlockCamera()
-    {
-        FirstPerson.ReInitializeMouseLook();
-        FirstPerson.DisableCamera = false;
-    }
-    public void UnlockMovement()
-    {
-        FirstPerson.DisableMovement = false;
+        Lock(false);
     }
 }

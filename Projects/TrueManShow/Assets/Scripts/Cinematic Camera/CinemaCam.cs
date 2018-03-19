@@ -34,7 +34,7 @@ public class CinemaCam : SerializedMonoBehaviour
     }
     public void UnlockCamera()
     {
-        OnMovementUnlocked.Invoke();
+        OnCameraUnlocked.Invoke();
     }
     public void LockMovement()
     {

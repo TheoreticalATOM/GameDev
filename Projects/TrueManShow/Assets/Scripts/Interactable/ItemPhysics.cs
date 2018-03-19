@@ -54,6 +54,7 @@ public class ItemPhysics : Item
 
             // Makes sure that the camera is locked when the Right click is pressed
             bool isRightClicking = Input.GetButton("Fire2");
+            player.GetComponent<CameraRaycast>().FirstPerson.DisableCamera = isRightClicking;
             player.GetComponent<CameraRaycast>().FirstPerson.DisableMovement = isRightClicking;
             if (isRightClicking)
             {

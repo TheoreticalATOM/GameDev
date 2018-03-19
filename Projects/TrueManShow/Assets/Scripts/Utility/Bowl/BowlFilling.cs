@@ -22,7 +22,7 @@ public class BowlFilling : SerializedMonoBehaviour
     [SerializeField, HideInInspector] private StepDetails[] mSteps;
     private Coroutine mUpdateRoutine;
     private System.Func<bool> mUpdateManualAction;
-    
+
     private Material mMaterial;
     private Color mAvgColour;
 
@@ -43,12 +43,27 @@ public class BowlFilling : SerializedMonoBehaviour
 
     private void OnDrawGizmos()
     {
+        float temp = 0.0f;
+        //Gizmos.matrix = transform.localToWorldMatrix;
         Vector3 thisPos = transform.position;
         Gizmos.color = Color.green;
         for (int i = 0; i < mSteps.Length; i++)
-            Gizmos.DrawWireCube(mSteps[i].Offset + thisPos, mSteps[i].Scale);
+        {
+            Vector3 pos = mSteps[i].Offset;
+            temp = pos.y;
+            pos.y = pos.z;
+            pos.z = temp;
 
-        Gizmos.DrawWireCube(MaxDetails.Offset, MaxDetails.Scale);
+            Gizmos.DrawWireCube(pos + transform.position, mSteps[i].Scale);
+        }
+
+        Gizmos.color = Color.red;
+
+        Vector3 maxOffset = MaxDetails.Offset;
+        temp = maxOffset.y;
+        maxOffset.y = maxOffset.z;
+        maxOffset.z = temp;
+        Gizmos.DrawWireCube(maxOffset + transform.position, MaxDetails.Scale);
     }
 
     [Button]
@@ -88,7 +103,7 @@ public class BowlFilling : SerializedMonoBehaviour
         mUpdateManualAction = () => BowlManualInsertion(targetColour, transitionSpeed, () =>
         {
             UpdateStepTarget();
-            if(clearSetOnCompletion)
+            if (clearSetOnCompletion)
                 ClearAddBowlManual();
         });
     }
@@ -125,9 +140,9 @@ public class BowlFilling : SerializedMonoBehaviour
         DistanceToTarget = (thisPos - targetPos).sqrMagnitude;
 
         bool isCloseEnough = (thisPos - targetPos).sqrMagnitude < CloseEnoughDistance * CloseEnoughDistance;
-        if(isCloseEnough)
+        if (isCloseEnough)
             UpdateStepTarget();
-        
+
         return isCloseEnough;
     }
 
@@ -141,7 +156,7 @@ public class BowlFilling : SerializedMonoBehaviour
         if (mUpdateRoutine != null)
             StopCoroutine(mUpdateRoutine);
 
-        mAvgColour = (mAvgColour + colour) / 2.0f;
+        mAvgColour = (mAvgColour + colour) / StepCount;
 
         mUpdateRoutine = StartCoroutine(UpdateRoutine(mSteps[mStepTarget], mAvgColour));
         UpdateStepTarget();

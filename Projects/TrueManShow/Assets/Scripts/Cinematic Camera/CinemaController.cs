@@ -61,7 +61,8 @@ public class CinemaController : MonoBehaviour
 
         if((direction & ECameraLocking.MOVEMENT) == ECameraLocking.MOVEMENT)
         {
-
+            if(value) Cinema.LockMovement();
+            else Cinema.UnlockMovement();
         }
 
         if((direction & ECameraLocking.ROOT_MOTION) == ECameraLocking.ROOT_MOTION)
