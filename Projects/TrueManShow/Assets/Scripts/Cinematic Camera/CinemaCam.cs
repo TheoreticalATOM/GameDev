@@ -18,23 +18,32 @@ public class CinemaCam : SerializedMonoBehaviour
     [Header("Animation and Restriction")]
     public Animator CameraAnimator;
 
-    public UnityEvent OnLocked;
-    public UnityEvent OnUnlocked;
+    public UnityEvent OnCameraLocked;
+    public UnityEvent OnCameraUnlocked;
+    public UnityEvent OnMovementLocked;
+    public UnityEvent OnMovementUnlocked;
 
     private Stack<UnityEvent> mKeyEvents;
     private Stack<System.Action> mAnimationCompleteEvents;
-    
+
     // _______________________________________________________
     // @ Locking
     public void LockCamera()
     {
-        OnLocked.Invoke();
+        OnCameraLocked.Invoke();
     }
     public void UnlockCamera()
     {
-        OnUnlocked.Invoke();
+        OnMovementUnlocked.Invoke();
     }
-
+    public void LockMovement()
+    {
+        OnMovementLocked.Invoke();
+    }
+    public void UnlockMovement()
+    {
+        OnMovementUnlocked.Invoke();
+    }
     // _______________________________________________________
     // @ Events
     public void RegisterAnimationCompletion()

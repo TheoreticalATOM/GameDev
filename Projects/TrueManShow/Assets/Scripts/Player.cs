@@ -28,11 +28,16 @@ public class Player : Resetable
     private void Start()
     {
         LockCamera();
+        LockMovement();
     }
 
     public void LockCamera()
     {
-        FirstPerson.enabled = false;
+        FirstPerson.DisableCamera = true;
+    }
+    public void LockMovement()
+    {
+        FirstPerson.DisableMovement = true;
     }
 
     public override void ResetObject()
@@ -45,7 +50,11 @@ public class Player : Resetable
 
     public void UnlockCamera()
     {
-        FirstPerson.enabled = true;
         FirstPerson.ReInitializeMouseLook();
+        FirstPerson.DisableCamera = false;
+    }
+    public void UnlockMovement()
+    {
+        FirstPerson.DisableMovement = false;
     }
 }

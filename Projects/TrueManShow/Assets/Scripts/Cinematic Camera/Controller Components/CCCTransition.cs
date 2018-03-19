@@ -48,7 +48,6 @@ public class CCCTransition : CinematicControllerComponent
             float dSpeed = speed * Time.deltaTime;
 
             // Movement
-            Debug.Log("Hello");
             TryLerpValue(ref pos.x, ref distance.x, targetPos.x, dSpeed, restriction, MovementRestriction.PX);
             TryLerpValue(ref pos.y, ref distance.y, targetPos.y, dSpeed, restriction, MovementRestriction.PY);
             TryLerpValue(ref pos.z, ref distance.z, targetPos.z, dSpeed, restriction, MovementRestriction.PZ);
