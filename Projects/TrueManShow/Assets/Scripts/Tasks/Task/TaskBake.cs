@@ -21,7 +21,7 @@ public class TaskBake : SubTaskLogger
 
     public void BakeCake()
     {
-        if (HasCake && IsDoorClosed)
+        if (!Cake.activeSelf && HasCake && IsDoorClosed)
         {
             if (mBakingDelayRoutine == null)
                 mBakingDelayRoutine = StartCoroutine(BakingDelay());
@@ -39,12 +39,13 @@ public class TaskBake : SubTaskLogger
         CakePlacementTrigger.SetActive(false);
 
         yield return new WaitForSeconds(WaitingDurationInSeconds);
+        CakeCompleteEvent.Invoke();
+    }
 
+    public void UnlockOven()
+    {
         Door.CanBeInteractedWith = true;
-
         Knob.CanBeInteractedWith = true;
         Knob.OnInteracted.Invoke();
-
-        CakeCompleteEvent.Invoke();
     }
 }

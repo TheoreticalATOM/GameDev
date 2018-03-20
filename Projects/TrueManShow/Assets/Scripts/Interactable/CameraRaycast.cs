@@ -56,7 +56,7 @@ public class CameraRaycast : MonoBehaviour {
                     //Check if we are pressing the "interact" input to interact 
                     //and if the previous object as returned to the desired location
 
-                    if (Input.GetButtonDown("Interact"))
+                    if (Input.GetButtonDown("Interact") && item.CanBePickedUp)
                     {
                         InteractableItem = item;
                         InteractableItem.StartInteract(hit.collider.gameObject, this.gameObject);

@@ -8,9 +8,15 @@ public abstract class Item : MonoBehaviour
 {
 
     public DialogNode[] nodes;
+    public bool CanBePickedUp = true;
     private bool mHasBeenUsedToday;
 
     public cakeslice.Outline ItemOutline { get; private set; }
+
+    public void CanPickup(bool value)
+    {
+        CanBePickedUp = value;
+    }
 
     protected virtual void Awake()
     {
