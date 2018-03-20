@@ -24,6 +24,17 @@ namespace SDE
             queue.Enqueue(value);
             return value;
         }
+        public static void DequeueAll<T>(this Queue<T> queue, System.Action<T> AfterPop)
+        {
+            while (queue.Count > 0)
+                AfterPop(queue.Dequeue());
+        }
+
+        public static void Enqueue<T>(this Queue<T> queue, T[] array)
+        {
+            for (int i = 0; i < array.Length; i++)
+                queue.Enqueue(array[i]);
+        } 
 
         // _________________________________________________
         // Stacks

@@ -23,7 +23,7 @@ public class CinemaCam : SerializedMonoBehaviour
     public UnityEvent OnMovementLocked;
     public UnityEvent OnMovementUnlocked;
 
-    private Stack<UnityEvent> mKeyEvents;
+    private Queue<UnityEvent> mKeyEvents;
     private Stack<System.Action> mAnimationCompleteEvents;
 
     // _______________________________________________________
@@ -49,17 +49,23 @@ public class CinemaCam : SerializedMonoBehaviour
     public void RegisterAnimationCompletion()
     {
         mAnimationCompleteEvents.PopAll(popped => popped.Invoke());
+        mKeyEvents.Clear(); // when it is completed, remove all the logged key events
     }
 
     public void RegisterKeyEvent()
     {
-        mKeyEvents.PopAll(popped => popped.Invoke());
+        // do only one item at a time, allowing for calling multiple events iteratively
+        mKeyEvents.Dequeue().Invoke();
     }
 
     // + Adding Event Triggers
     public void AddKeyEventTrigger(UnityEvent e)
     {
-        mKeyEvents.Push(e);
+        mKeyEvents.Enqueue(e);
+    }
+    public void AddKeyEventTriggers(UnityEvent[] e)
+    {
+        mKeyEvents.Enqueue(e);
     }
 
     public void AddAnimationCompleteTrigger(System.Action e)
@@ -69,7 +75,7 @@ public class CinemaCam : SerializedMonoBehaviour
 
     private void Awake()
     {
-        mKeyEvents = new Stack<UnityEvent>();
+        mKeyEvents = new Queue<UnityEvent>();
         mAnimationCompleteEvents = new Stack<System.Action>();
     }
 }

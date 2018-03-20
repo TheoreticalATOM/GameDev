@@ -6,7 +6,7 @@ public class CCCAnimation : CinematicControllerComponent
     public ScriptableAnimation AnimationDetail;
 
     public UnityEvent OnAnimationStarted;
-    public UnityEvent OnKeyEventTriggered;
+    public UnityEvent[] OnKeyEventsTriggered;
     public UnityEvent OnAnimationCompleted;
 
     public override void Respond(CinemaCam camera, System.Action onCompletionCallback)
@@ -18,7 +18,9 @@ public class CCCAnimation : CinematicControllerComponent
             onCompletionCallback.TryInvoke();
             OnAnimationCompleted.Invoke();
         });
-        camera.AddKeyEventTrigger(OnKeyEventTriggered);
+
+        if(OnKeyEventsTriggered.Length > 0)
+            camera.AddKeyEventTriggers(OnKeyEventsTriggered);
         AnimationDetail.SetValue(camera.CameraAnimator);
     }
 }
