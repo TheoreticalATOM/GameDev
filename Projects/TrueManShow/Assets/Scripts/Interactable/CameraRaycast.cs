@@ -7,7 +7,12 @@ using UnityEngine.UI;
 
 public class CameraRaycast : MonoBehaviour {
 	public Camera maincamera;
-	public float RaycastDist;
+	private float RaycastDist;
+	public float MaxRaycastDist;
+	public float MinRaycastDist;
+	[Range(0.0f,90.0f)]
+	public float AngleMaxReach = 45f;
+	public GameObject SnapPoint;
 	public Texture2D crosshairImage;
     public FirstPersonController FirstPerson;
 
@@ -17,7 +22,6 @@ public class CameraRaycast : MonoBehaviour {
     RaycastHit hit;
     public bool Interacting = false;
     
-
     // Use this for initialization
     void Start () {
 	}
@@ -25,13 +29,12 @@ public class CameraRaycast : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-
         Ray ray = maincamera.ScreenPointToRay(Input.mousePosition);
-
         //Check if we are curently already interacting with an object
         if (!Interacting)
         {
             //Throws a ray and checks if we hit any object in the world
+			RaycastDist = CalcRayDist(MinRaycastDist,MaxRaycastDist,AngleMaxReach);
             if (Physics.Raycast(ray, out hit, RaycastDist))
             {
 
@@ -74,4 +77,16 @@ public class CameraRaycast : MonoBehaviour {
             Interacting = InteractableItem.InteractUpdate(interactedObject,this.gameObject);
         }
     }
+
+	private float CalcRayDist(float MinDist, float MaxDist, float MaxAngle){
+		Vector3 CenterofView = new Vector3(SnapPoint.transform.position.x,transform.position.y,SnapPoint.transform.position.z);
+		Vector3 targetDir = CenterofView - transform.position;
+		float Angle = Vector3.Angle (targetDir,transform.forward);
+		if (Angle > MaxAngle) {
+			return MaxDist;
+		} else {
+			return MinDist + ((MaxDist - MinDist) * (Angle / MaxAngle));
+		}
+	}
 }
+	
