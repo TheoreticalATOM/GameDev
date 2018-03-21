@@ -12,9 +12,10 @@ public abstract class LimitedSerializedMonoBehaviour : Resetable
 
 public abstract class Task : LimitedSerializedMonoBehaviour
 {
-    // ________________________________________________________ Inspector Content	
+    // ________________________________________________________ Inspector Content
+    public string TaskName;
     [TextArea(3, 15), TabGroup("Details")] public string Description;
-    [MinMaxSlider(0.0f, 80.0f, true), TabGroup("Details")] public Vector2 TimeToFinishInSeconds;
+    [MinMaxSlider(0.0f, 200.0f, true), TabGroup("Details")] public Vector2 TimeToFinishInSeconds;
     [MinValue(0), TabGroup("Details")] public float SuspicionIncrease = 5.0f;
     [MinValue(0), TabGroup("Details")] public float SuspicionDecrease = 5.0f;
 
@@ -137,6 +138,8 @@ public abstract class Task : LimitedSerializedMonoBehaviour
 			}
 			// update the current time every frame from the start-time's reference point
 			CurrentTime = Time.time - mStartTime;
+
+            mOwner.AutoQueue.TimeBar.UpdateBar(CurrentTime, MaximumTime);
 		};
 
 		// turn on the update method, and track the start time

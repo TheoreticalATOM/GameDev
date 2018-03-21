@@ -10,40 +10,11 @@ public class CCCLookAt : CinematicControllerComponent
     public float CloseEnoughRotation;
     public UnityEvent OnLookingAt;
 
-    private delegate IEnumerator DelLookAtRoutine(CinemaCam camera, Action onCompletedCallback);
-    private DelLookAtRoutine mRoutineAction;
-
-    private void Start()
-    {
-        if (LookAtTarget.gameObject.isStatic)
-            mRoutineAction = LookAtRoutineStatic;
-        else
-            mRoutineAction = LookAtRoutine;
-    }
-
     public override void Respond(CinemaCam camera, Action onCompletedCallback)
     {
         StartCoroutine(LookAtRoutine(camera, onCompletedCallback));
     }
-
-    private IEnumerator LookAtRoutineStatic(CinemaCam camera, Action onCompletedCallback)
-    {
-        Transform camTrans = camera.CameraTransform.transform;
-
-        Quaternion targetRot = Quaternion.LookRotation(LookAtTarget.position - camTrans.position);
-        Quaternion camRot = camTrans.rotation;
-        while (!IsCloseEnough(ref camRot, ref targetRot))
-        {
-            // slerp the rotation
-            UpdateRotation(ref camRot, targetRot);
-            camTrans.rotation = camRot;
-            yield return null;
-        }
-
-        // Upon completion, call the callback
-        Complete(onCompletedCallback);
-    }
-
+    
     private IEnumerator LookAtRoutine(CinemaCam camera, Action onCompletedCallback)
     {
         Transform camTrans = camera.CameraTransform.transform;

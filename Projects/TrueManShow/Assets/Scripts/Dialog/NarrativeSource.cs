@@ -31,12 +31,12 @@ public class NarrativeSource : MonoBehaviour, IRuntime
         if (mDialogCoroutine != null)
             StopCoroutine(mDialogCoroutine);
 
+        OnPlayed.Invoke();
         mDialogCoroutine = StartCoroutine(DialogSegementsRoutine(segments, OnFinished));
     }
 
     private IEnumerator DialogSegementsRoutine(Segment[] segments, System.Action OnFinished)
     {
-        OnPlayed.Invoke();
         DialogUI ui = DialogUISet.GetFirst<DialogUI>();
         foreach (Segment segment in segments)
         {

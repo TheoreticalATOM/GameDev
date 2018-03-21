@@ -29,7 +29,7 @@ public class ItemRotatable : Item
                 posReachIn = false;
                 posReachOut = false;
                 //interactedObjectOut = interactedObject;
-                player.GetComponent<PostProcessingBehaviour>().enabled = false;
+                player.GetComponent<PostProcessingBehaviour>().profile.depthOfField.enabled = false;
                 return true;
             }
             else
@@ -69,7 +69,7 @@ public class ItemRotatable : Item
         OrigPos = Object.transform.position;
         OrigRot = Object.transform.rotation;
         player.GetComponent<CameraRaycast>().FirstPerson.enabled = false;
-        player.GetComponent<PostProcessingBehaviour>().enabled = true;
+        player.GetComponent<PostProcessingBehaviour>().profile.depthOfField.enabled = true;
         //profile.DepthofField.FocalLenght = 0;
     }
 

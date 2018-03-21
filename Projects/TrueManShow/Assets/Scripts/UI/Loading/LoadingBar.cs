@@ -3,13 +3,19 @@ using UnityEngine;
 
 public class LoadingBar : MonoBehaviour
 {
+    private delegate float DelProgressPercentage(float value, float maxValue);
+    private readonly static DelProgressPercentage[] PROGRESS_METHODS =  { GetPercentage0To100, GetPercentage100To0 };
+
     public const float NEAR_ENOUGH_FUDGE_FACTOR = 0.4f;
 
     [System.Flags]
     public enum EBarDir { Horizontal = 1, Vertical = 2 }
 
+    public enum EBarProgressDir { From0To100 = 0, From100To0 };
+
     public RectTransform Bar;
     public EBarDir Direction;
+    public EBarProgressDir ProgressDirection = EBarProgressDir.From0To100;
     public float LerpSpeed;
 
     private Vector2 mOrigSize;
@@ -23,11 +29,20 @@ public class LoadingBar : MonoBehaviour
     public virtual void UpdateBar(float value, float maxValue)
     {
         mTargetSize = mOrigSize;
-        float percent = value / maxValue;
-
+        float percent = PROGRESS_METHODS[(int)ProgressDirection](value, maxValue);
         SetBarRect(ref mTargetSize, percent);
         enabled = true;
     }
+
+    private static float GetPercentage0To100(float value, float maxValue)
+    {
+        return value / maxValue;
+    }
+    private static float GetPercentage100To0(float value, float maxValue)
+    {
+        return (maxValue - value) / maxValue;
+    }
+    
 
     // ________________________________________________________ Methods
     private void Awake()

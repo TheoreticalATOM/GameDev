@@ -17,6 +17,8 @@ public class TaskList : SerializedMonoBehaviour
     [MinValue(0), TabGroup("Random Tasks")] public int NumberOfRandomTasks;
     [TabGroup("Random Tasks")] public Task[] RandomTasks;
 
+    public AutoQueue AutoQueue;
+
     void OnValidate()
     {
         NumberOfRandomTasks = Mathf.Min(NumberOfRandomTasks, RandomTasks.Length);
@@ -95,6 +97,8 @@ public class TaskList : SerializedMonoBehaviour
         if (NumberOfRandomTasks < 1)
         {
             AddTaskToList(SpecificTask);
+            AutoQueue.SetToTaskDescription(mTaskList.Peek());
+            AutoQueue.LiveIndicator.SetActive(true);
             return;
         }
 
@@ -125,6 +129,9 @@ public class TaskList : SerializedMonoBehaviour
             Task randTask = RandomTasks[i++];
             Assert.IsNotNull(randTask, name + "(Task List): has an empty random task");
             AddTaskToList(randTask);
+
+            AutoQueue.SetToTaskDescription(mTaskList.Peek());
+            AutoQueue.LiveIndicator.SetActive(true);
         }
     }
 
@@ -184,7 +191,6 @@ public class TaskList : SerializedMonoBehaviour
     {
         /* will reomve the currenlty active task and check if there are any left.
 		If none, then fire off an event */
-
         Task task = mTaskList.Dequeue();
 #if UNITY_EDITOR
         if (TaskListNames.ContainsKey(task))
@@ -192,6 +198,10 @@ public class TaskList : SerializedMonoBehaviour
 #endif
 
         if (TasksLeft < 1)
+        {
+            AutoQueue.SetQueue("Completed!", "No Tasks left");
+            AutoQueue.LiveIndicator.SetActive(false);
             FinishedEveryTask.Invoke();
+        }
     }
 }
