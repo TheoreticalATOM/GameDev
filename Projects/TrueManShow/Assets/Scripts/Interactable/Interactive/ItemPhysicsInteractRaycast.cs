@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class ItemPhysicsInteractRaycast : ItemPhysicsInteract
@@ -6,16 +7,21 @@ public class ItemPhysicsInteractRaycast : ItemPhysicsInteract
     public float dist;
     private RaycastHit hit;
     private Collider CurrentHit;
+    private Coroutine mRoutine;
+
     protected override bool OnInteract(GameObject player)
     {
-
-        if (Physics.Raycast(transform.position, Camera.main.transform.forward, out hit, dist, ItemInventoryMask) && CurrentHit != hit.collider)
+        bool collided = Physics.Raycast(transform.position, Camera.main.transform.forward, out hit, dist, ItemInventoryMask);
+        if (collided && CurrentHit != hit.collider)
         {
             CurrentHit = hit.collider;
-
+            Debug.Log(CurrentHit.name);
             return !TryAddToInventory(hit.collider);
         }
-        CurrentHit = null;
+        else if(!collided)
+            CurrentHit = null;
+
+        //CurrentHit = null;
         return true;
     }
 }

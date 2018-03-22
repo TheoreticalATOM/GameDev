@@ -3,11 +3,18 @@
 [System.Serializable]
 public class ResponseDetails
 {
-	public IIReaction Reaction;
-	public InventoryResponse Response;
+    public IIReaction Reaction;
+    public InventoryResponse Response;
 }
 
 public abstract class ResponseCollection : SerializedMonoBehaviour
 {
-	public abstract ResponseDetails GetResponseDetails(InteractiveInventory inventory);
+    private void Reset()
+    {
+		ItemPhysicsInteract item = GetComponent<ItemPhysicsInteract>();
+		if(item && !item.Response)
+			item.Response = this;
+    }
+
+    public abstract ResponseDetails GetResponseDetails(InteractiveInventory inventory);
 }
