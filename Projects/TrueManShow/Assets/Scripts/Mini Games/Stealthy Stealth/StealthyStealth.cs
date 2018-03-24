@@ -4,11 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 
-public class StealthyStealth : MonoBehaviour
+public class StealthyStealth : MiniGame
 {
     public Image player;
     public float playerSpeed = 200.0f;
-    public bool CanControl;
 
     public Image camera1;
     public Image camera2;
@@ -21,19 +20,24 @@ public class StealthyStealth : MonoBehaviour
     public GameObject MenuStuff;
     public bool menuActive = true;
 
-    public UnityEvent FinishedGame;
-
     private Vector3 mStartPos;
 
-    public void StartGame()
+    void OnTriggerEnter2D(Collider2D other)
     {
-        gameObject.SetActive(true);
-        MenuStuff.SetActive(true);
-        gameStuff.SetActive(false);
-        gameWon.SetActive(false);
+        if (other.gameObject.CompareTag("Door"))
+        {
+            gameStuff.SetActive(false);
+            gameWon.SetActive(true);
+            CompleteGame();
+        }
+
+        if (other.gameObject.CompareTag("VisionCone"))
+        {
+            player.transform.position = mStartPos;
+        }
     }
 
-    void Start()
+    protected override void OnInit()
     {
         gameObject.SetActive(false);
         MenuStuff.SetActive(false);
@@ -43,41 +47,28 @@ public class StealthyStealth : MonoBehaviour
         mStartPos = transform.position;
     }
 
-
-    void Update()
+    protected override void OnPlay()
     {
-        if (CanControl)
-        {
-            var move = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
-            transform.position += move * playerSpeed * Time.deltaTime;
+        gameObject.SetActive(true);
+        MenuStuff.SetActive(true);
+        gameStuff.SetActive(false);
+        gameWon.SetActive(false);
+    }
 
-            if (Input.GetKeyDown("space") && menuActive)
-            {
-                MenuStuff.SetActive(false);
-                gameStuff.SetActive(true);
-                gameWon.SetActive(false);
-            }
+    protected override void OnUpdate()
+    {
+        var move = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
+        transform.position += move * playerSpeed * Time.deltaTime;
+
+        if (Input.GetKeyDown("space") && menuActive)
+        {
+            MenuStuff.SetActive(false);
+            gameStuff.SetActive(true);
+            gameWon.SetActive(false);
         }
-        
+
         camera1.transform.rotation = Quaternion.Euler(0f, 0f, maxRotation * Mathf.Sin(Time.time * speed));
         camera2.transform.rotation = Quaternion.Euler(0f, 0f, maxRotation * Mathf.Sin(Time.time * speed));
         camera3.transform.rotation = Quaternion.Euler(0f, 0f, maxRotation * Mathf.Sin(Time.time * speed));
-    }
-
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.gameObject.CompareTag("Door"))
-        {
-            gameStuff.SetActive(false);
-            gameWon.SetActive(true);
-            //player.gameObject.SetActive(false);
-            CanControl = false;
-            FinishedGame.Invoke();
-        }
-
-        if (other.gameObject.CompareTag("VisionCone"))
-        {
-            player.transform.position = mStartPos;
-        }
     }
 }

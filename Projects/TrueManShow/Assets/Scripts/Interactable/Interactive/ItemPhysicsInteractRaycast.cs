@@ -6,22 +6,34 @@ public class ItemPhysicsInteractRaycast : ItemPhysicsInteract
     public LayerMask ItemInventoryMask;
     public float dist;
     private RaycastHit hit;
-    private Collider CurrentHit;
-    private Coroutine mRoutine;
+
+    private bool mAddedToInventory;
+
+    protected override void OnStartInteract(GameObject InteractedObject, GameObject player)
+    {
+        base.OnStartInteract(InteractedObject, player);
+        
+        if(mAddedToInventory)
+        {
+            StopAllCoroutines();
+            StartCoroutine(DelayRemoveFromInventory());
+        }
+    }
 
     protected override bool OnInteract(GameObject player)
     {
         bool collided = Physics.Raycast(transform.position, Camera.main.transform.forward, out hit, dist, ItemInventoryMask);
-        if (collided && CurrentHit != hit.collider)
+        if (collided && !mAddedToInventory)
         {
-            CurrentHit = hit.collider;
-            Debug.Log(CurrentHit.name);
-            return !TryAddToInventory(hit.collider);
+            mAddedToInventory = TryAddToInventory(hit.collider);
+            return !mAddedToInventory;
         }
-        else if(!collided)
-            CurrentHit = null;
-
-        //CurrentHit = null;
         return true;
+    }
+
+    IEnumerator DelayRemoveFromInventory()
+    {
+        yield return new WaitForSeconds(2.0f);
+        mAddedToInventory = false;
     }
 }
