@@ -11,6 +11,11 @@ namespace SDE
             if (action != null)
                 action();
         }
+        public static void TryInvoke<T>(this System.Action<T> action, T value)
+        {
+            if (action != null)
+                action(value);
+        }
 
         // _________________________________________________
         // Queues
@@ -34,7 +39,7 @@ namespace SDE
         {
             for (int i = 0; i < array.Length; i++)
                 queue.Enqueue(array[i]);
-        } 
+        }
 
         // _________________________________________________
         // Stacks
