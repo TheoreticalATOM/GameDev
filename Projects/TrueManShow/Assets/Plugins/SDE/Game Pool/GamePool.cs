@@ -78,7 +78,7 @@ namespace SDE.GamePool
             for (int i = 0; i < amount; i++)
             {
                 GameObject go = Instantiate(obj);
-                go.transform.parent = transform;
+                go.transform.SetParent(transform);
                 pool.Enqueue(new PooledObjectInstance(go));
             }
             mPool.Add(obj.GetInstanceID(), pool);
