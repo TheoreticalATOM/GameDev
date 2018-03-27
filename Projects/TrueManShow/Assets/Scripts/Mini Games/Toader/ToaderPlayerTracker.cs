@@ -17,21 +17,22 @@ public class ToaderPlayerTracker : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         mPlayer = other.GetComponent<ToaderPlayer>();
-		mPlayer.IsOnPlatform = true;
+        mMover.OnMoved += MovePlayer;
+    }
 
-		mMover.OnMoved += MovePlayer;
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        ToaderRiver.UpdateDelay();
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-		mMover.OnMoved -= MovePlayer;
-        
-		mPlayer.IsOnPlatform = false;
-		mPlayer = null;
+        mMover.OnMoved -= MovePlayer;
+        mPlayer = null;
     }
-	
-	private void MovePlayer()
-	{
-		mPlayer.Move(-transform.right);
-	}
+
+    private void MovePlayer()
+    {
+        mPlayer.Move(-transform.right);
+    }
 }

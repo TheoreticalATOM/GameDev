@@ -4,15 +4,29 @@ using UnityEngine;
 
 public class GameConsole : MonoBehaviour
 {
-	public MiniGame CurrentGame;
+    private MiniGame mCurrentGame;
+	
+    public void SetCurrentGame(MiniGame game)
+    {
+        mCurrentGame = game;
+    }
 
-	public void StartGame()
-	{
-		CurrentGame.Play();
-	}
+    public void StartGame()
+    {
+        if (mCurrentGame)
+            mCurrentGame.Play();
+    }
 
-	public void EndGame()
-	{
-		CurrentGame.End();
-	}
+    public void PauseGame(bool state)
+    {
+        if (mCurrentGame)
+            mCurrentGame.Pause(state);
+    }
+
+    public void EndGame()
+    {
+        if (mCurrentGame)
+            mCurrentGame.End();
+        mCurrentGame = null;
+    }
 }

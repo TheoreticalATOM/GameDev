@@ -1,19 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
+using Sirenix.OdinInspector;
 
-public abstract class MiniGame : MonoBehaviour
+public abstract class MiniGame : SerializedMonoBehaviour
 {
-	[System.Serializable]
-	public class GameView
-	{
-		public Camera camera;
-		public float Size;
-		public Color BackgroundColor;
-	}
+    [System.Serializable]
+    public class GameView
+    {
+        public float Size;
+        public Color BackgroundColor;
+        public Transform Target;
+        public bool Follow = false;
+    }
 
-    public Material ExternalView;
+    public MiniGameCamera Camera;
+    public GameView View;
     public UnityEvent OnGameCompleted;
 
     protected bool IsPaused { get; private set; }
@@ -26,10 +27,13 @@ public abstract class MiniGame : MonoBehaviour
         OnGameCompleted.Invoke();
     }
 
+    [Button]
     public void Play()
     {
         gameObject.SetActive(true);
         IsPaused = false;
+        Camera.SetTarget(View);
+
         OnPlay();
     }
 
@@ -39,10 +43,12 @@ public abstract class MiniGame : MonoBehaviour
         OnPaused();
     }
 
+    [Button]
     public void End()
     {
         gameObject.SetActive(false);
         OnEnded();
+        Camera.ClearTarget();
     }
     #endregion
     // _________________________________________________________
@@ -51,13 +57,13 @@ public abstract class MiniGame : MonoBehaviour
     protected abstract void OnPlay();
     protected virtual void OnPaused() { }
     protected virtual void OnEnded() { }
-    protected virtual void OnUpdate() { enabled = false;}
+    protected virtual void OnUpdate() { enabled = false; }
 
     // _________________________________________________________
     // @ Methods
     private void Start()
     {
-        //gameObject.SetActive(false);
+        gameObject.SetActive(false);
         OnInit();
     }
     private void Update()

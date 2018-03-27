@@ -10,7 +10,7 @@ public class ToaderAutoMover : MonoBehaviour, IPoolable
     public float MaxDistance;
     public float Rate;
 
-	public System.Action OnMoved;
+    public System.Action OnMoved;
     private float mDisplacementX;
     IEnumerator MoveRoutine()
     {
@@ -20,7 +20,7 @@ public class ToaderAutoMover : MonoBehaviour, IPoolable
             Vector3 step = -transform.right * MiniGameToader.TILE_STEP;
             mDisplacementX += step.x;
             transform.Translate(step, Space.World);
-			OnMoved.TryInvoke();
+            OnMoved.TryInvoke();
             yield return new WaitForSeconds(Rate);
         }
         gameObject.SetActive(false);
@@ -30,10 +30,23 @@ public class ToaderAutoMover : MonoBehaviour, IPoolable
     {
         StartCoroutine(MoveRoutine());
     }
-    public void OnCreated() { }
+    public void OnCreated()
+    {
+        MiniGameToader.OnGameEnded += KillObjectPrematurely;
+    }
 
     private void OnDisable()
-    { 
+    {
         StopAllCoroutines();
+    }
+
+    private void OnDestroy()
+    {
+        MiniGameToader.OnGameEnded -= KillObjectPrematurely;
+    }
+
+    private void KillObjectPrematurely()
+    {
+        gameObject.SetActive(false);
     }
 }

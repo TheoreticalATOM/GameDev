@@ -11,29 +11,32 @@ public class ToaderGoal : MonoBehaviour
     public Sprite Unused;
     public Sprite Used;
     public int PointAmount;
-		
+    public BoxCollider2D Collider;
+
     public System.Action<int> OnGoalReached;
 
     private Image mImage;
-    private BoxCollider2D mCollider;
 
     private void Awake()
     {
         mImage = GetComponent<Image>();
-        mCollider = GetComponent<BoxCollider2D>();
     }
 
     private void OnEnable()
     {
+        ResetGoal();
+    }
+
+    public void ResetGoal()
+    {
         mImage.sprite = Unused;
-        mCollider.isTrigger = true;
+        Collider.enabled = false;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         mImage.sprite = Used;
         OnGoalReached.TryInvoke(PointAmount);
-        mCollider.isTrigger = false;
-
+        Collider.enabled = true;
     }
 }

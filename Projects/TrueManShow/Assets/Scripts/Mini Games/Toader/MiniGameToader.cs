@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class MiniGameToader : MiniGame
 {
+    // ____________________________________________________
+    // @ Static Declaration
     public readonly static Quaternion UP_ROT = Quaternion.Euler(0.0f, 0.0f, -90.0f);
     public readonly static Quaternion RIGHT_ROT = Quaternion.Euler(0.0f, 0.0f, -180.0f);
     public readonly static Quaternion LEFT_ROT = Quaternion.Euler(0.0f, 0.0f, 0.0f);
@@ -13,28 +15,49 @@ public class MiniGameToader : MiniGame
     public static readonly int TILE_STEP = 40;
     private const string SCORE_FORMAT = "000000";
 
+    // ____________________________________________________
+    // @ Events
+    public static event System.Action OnGameEnded;
+
+    // ____________________________________________________
+    // @ Inspector
     [Header("Health")]
     public ToaderPlayer Player;
     public int MaxLives = 9;
     [Header("Level")]
     public int SpawnPoints = 19;
+    public int LevelDurationInSeconds = 60;
 
     [Header("UI")]
     public Text ScoreLabel;
     public Text LivesLabel;
-    public LoadingBar TimeBar;
+    public SDE.UI.Progress TimerBar;
 
+    [Space(2.0f)]
+    public GameObject GameOverView;
+    public Text GameOverScoreLabel;
+
+    // ____________________________________________________
+    // @ Data
     private int mScore;
     private int mLives;
+    private int mTimeCounter;
+    private float mLastTime = 0.0f;
 
+    private ToaderGoal[] mGoals;
+    private int mGoalsReachedCount;
+
+    // ____________________________________________________
+    // @ Controllers
     protected override void OnInit()
     {
-        foreach (var goal in GetComponentsInChildren<ToaderGoal>())
-            goal.OnGoalReached += OnUpdateScore;
+        mGoals = GetComponentsInChildren<ToaderGoal>();
+        mGoalsReachedCount = 0;
 
+        foreach (var goal in mGoals)
+            goal.OnGoalReached += OnGoalReached;
         Player.OnKilled += OnDied;
-
-        Play();
+        Player.OnPointsAdded += UpdateScore;
     }
 
     protected override void OnPlay()
@@ -44,37 +67,104 @@ public class MiniGameToader : MiniGame
 
         mLives = MaxLives;
         LivesLabel.text = mLives.ToString();
-    }
 
-    private void OnDestroy()
-    {
-        foreach (var goal in GetComponentsInChildren<ToaderGoal>())
-            goal.OnGoalReached -= OnUpdateScore;
+        mLastTime = Time.time;
+        mTimeCounter = 0;
 
-        Player.OnKilled -= OnDied;
-    }
+        ShowGameOver(false);
 
-    private void OnUpdateScore(int amount)
-    {
-        mScore += amount;
-        ScoreLabel.text = mScore.ToString(SCORE_FORMAT);
+        // Reset the goals
+        foreach (ToaderGoal goal in mGoals)
+            goal.ResetGoal();
+
         RandomRespawn();
     }
 
-    private void OnDied()
+    protected override void OnEnded()
     {
-        LivesLabel.text = (--mLives).ToString();
-        if (mLives <= 0)
+        StopAllCoroutines();
+        OnGameEnded.Invoke();
+    }
+    protected override void OnUpdate()
+    {
+        if (Input.GetButtonUp("MiniGameStart"))
         {
-            Debug.Log("GameOver");
+            ShowGameOver(false);
+            OnPlay();
         }
-        else
-            RandomRespawn();
+    }
+
+    protected override void OnPaused()
+    {
+        Player.enabled = IsPaused;
+    }
+    // ____________________________________________________
+    // @ Methods
+    private void OnDestroy()
+    {
+        foreach (var goal in mGoals)
+            goal.OnGoalReached -= OnGoalReached;
+
+        Player.OnKilled -= OnDied;
+        Player.OnPointsAdded -= UpdateScore;
+    }
+
+    private void UpdateScore(int amount)
+    {
+        mScore += amount;
+        ScoreLabel.text = mScore.ToString(SCORE_FORMAT);
     }
 
     private void RandomRespawn()
     {
+        StopAllCoroutines();
+        StartCoroutine(AsyncTimeRoutine());
+
         int spawnPoint = Random.Range(0, SpawnPoints);
         Player.Respawn(spawnPoint);
+    }
+
+    private IEnumerator AsyncTimeRoutine()
+    {
+        int timeCounter = 0;
+        do
+        {
+            TimerBar.UpdateProgress(timeCounter++, LevelDurationInSeconds);
+            yield return new WaitForSeconds(1.0f);
+        } while (timeCounter < LevelDurationInSeconds);
+        Player.Kill();
+    }
+
+    // ____________________________________________________
+    // @ Events
+    private void OnGoalReached(int amount)
+    {
+        UpdateScore(amount);
+        if (++mGoalsReachedCount >= mGoals.Length)
+        {
+            ShowGameOver(true);
+            CompleteGame();
+        }
+        else
+            RandomRespawn();
+    }
+    private void OnDied()
+    {
+        LivesLabel.text = (--mLives).ToString();
+        if (mLives <= 0)
+            ShowGameOver(true);
+        else
+            RandomRespawn();
+    }
+
+    private void ShowGameOver(bool state)
+    {
+        if (state)
+        {
+            GameOverScoreLabel.text = mScore.ToString(SCORE_FORMAT);
+            OnGameEnded();
+        }
+        GameOverView.SetActive(state);
+        enabled = state;
     }
 }

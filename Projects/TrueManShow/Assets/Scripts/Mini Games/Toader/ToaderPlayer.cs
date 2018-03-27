@@ -7,12 +7,13 @@ using SDE;
 
 public class ToaderPlayer : MonoBehaviour
 {
-    public bool IsOnPlatform;
-
+    public int MovingUpPoint = 4;
+    public LayerMask FrontColliderCheckMask;
     private AxisUp mVInput = new AxisUp();
     private AxisUp mHInput = new AxisUp();
 
-    public System.Action OnKilled;
+    public event System.Action OnKilled;
+    public event System.Action<int> OnPointsAdded;
     private Rigidbody2D mBody;
 
     private Vector3 mOriginPoint;
@@ -41,6 +42,10 @@ public class ToaderPlayer : MonoBehaviour
         {
             transform.rotation = MiniGameToader.UP_ROT;
             Move(Vector2.up);
+
+            Collider2D frontCollider = Physics2D.OverlapBox(transform.position - transform.right * MiniGameToader.TILE_STEP, Vector2.one * MiniGameToader.TILE_STEP, 0.0f,  FrontColliderCheckMask);
+            if(!frontCollider || frontCollider.isTrigger)
+                OnPointsAdded.TryInvoke(MovingUpPoint);
         }
         else if (vInput < 0.0f)
         {
@@ -69,6 +74,5 @@ public class ToaderPlayer : MonoBehaviour
     public void Kill()
     {
         OnKilled.TryInvoke();
-        IsOnPlatform = false;
     }
 }
