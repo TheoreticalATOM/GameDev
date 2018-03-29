@@ -1,74 +1,97 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.Events;
+﻿using UnityEngine;
+
+using SDE;
 
 public class StealthyStealth : MiniGame
 {
-    public Image player;
-    public float playerSpeed = 200.0f;
+    public StealthyStealthPlayer Player;
+    public StealthyStealthLevel[] Levels;
+    public MiniGame.GameView PlayingView;
 
-    public Image camera1;
-    public Image camera2;
-    public Image camera3;
-    public float speed = 0.5f;
-    public float maxRotation = 30f;
-    public Image door;
-    public GameObject gameStuff;
-    public GameObject gameWon;
-    public GameObject MenuStuff;
-    public bool menuActive = true;
+    public GameObject MenuScreen;
+    public GameObject GameOverScreen;
 
-    private Vector3 mStartPos;
+    private int mCurrentLevel = 0;
+    private System.Action mMenuAction;
 
-    void OnTriggerEnter2D(Collider2D other)
+    private bool mIsLocked = false;
+
+    public void NextLevel()
     {
-        if (other.gameObject.CompareTag("Door"))
+        Levels[mCurrentLevel].End();
+        if (++mCurrentLevel > Levels.Length - 1)
         {
-            gameStuff.SetActive(false);
-            gameWon.SetActive(true);
+            GameOverScreen.SetActive(true);
+            Camera.SetTarget(View);
+
+            Player.gameObject.SetActive(false);
+            mMenuAction = OnPlay;
+            enabled = !mIsLocked;
             CompleteGame();
         }
+        else
+            Levels[mCurrentLevel].Play(Player);
 
-        if (other.gameObject.CompareTag("VisionCone"))
-        {
-            player.transform.position = mStartPos;
-        }
+        Player.LockPlayer(mIsLocked);
     }
 
     protected override void OnInit()
     {
-        gameObject.SetActive(false);
-        MenuStuff.SetActive(false);
-        gameStuff.SetActive(false);
-        gameWon.SetActive(false);
-
-        mStartPos = transform.position;
+        Player.OnDied += OnPlayerDied;
     }
 
     protected override void OnPlay()
     {
-        gameObject.SetActive(true);
-        MenuStuff.SetActive(true);
-        gameStuff.SetActive(false);
-        gameWon.SetActive(false);
+        // disable all the levels
+        Levels.Set(level => level.End());
+
+        // renable the first one
+        mCurrentLevel = 0;
+
+        GameOverScreen.SetActive(false);
+        MenuScreen.SetActive(true);
+
+        Player.gameObject.SetActive(false);
+
+        enabled = !mIsLocked;
+        mMenuAction = StartGameFromMainMenu;
+    }
+
+    public override void LockControls(bool state)
+    {
+        Player.LockPlayer(state);
+        mIsLocked = state;
+
+        if (GameOverScreen.activeSelf || MenuScreen.activeSelf)
+            enabled = !state;
+    }
+
+    private void StartGameFromMainMenu()
+    {
+        MenuScreen.SetActive(false);
+        Player.gameObject.SetActive(true);
+        Levels[mCurrentLevel].Play(Player);
+        Camera.SetTarget(PlayingView);
     }
 
     protected override void OnUpdate()
     {
-        var move = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
-        transform.position += move * playerSpeed * Time.deltaTime;
-
-        if (Input.GetKeyDown("space") && menuActive)
+        if (Input.GetButtonUp("MiniGameStart"))
         {
-            MenuStuff.SetActive(false);
-            gameStuff.SetActive(true);
-            gameWon.SetActive(false);
+            enabled = false;
+            mMenuAction();
         }
+    }
 
-        camera1.transform.rotation = Quaternion.Euler(0f, 0f, maxRotation * Mathf.Sin(Time.time * speed));
-        camera2.transform.rotation = Quaternion.Euler(0f, 0f, maxRotation * Mathf.Sin(Time.time * speed));
-        camera3.transform.rotation = Quaternion.Euler(0f, 0f, maxRotation * Mathf.Sin(Time.time * speed));
+    private void OnDestroy()
+    {
+        Player.OnDied -= OnPlayerDied;
+    }
+
+    private void OnPlayerDied()
+    {
+        Debug.Log("Died");
+        Camera.SetTarget(View);
+        OnPlay();
     }
 }

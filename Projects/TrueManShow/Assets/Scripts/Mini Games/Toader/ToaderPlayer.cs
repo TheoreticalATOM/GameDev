@@ -31,6 +31,7 @@ public class ToaderPlayer : MonoBehaviour
     public void Move(Vector3 direction)
     {
         mBody.MovePosition(transform.position + direction * MiniGameToader.TILE_STEP);
+        mBody.velocity = Vector2.zero;
     }
 
     private void MoveWithInput()

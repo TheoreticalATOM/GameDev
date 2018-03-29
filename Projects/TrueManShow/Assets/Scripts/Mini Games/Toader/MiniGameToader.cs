@@ -94,10 +94,11 @@ public class MiniGameToader : MiniGame
         }
     }
 
-    protected override void OnPaused()
+    public override void LockControls(bool state)
     {
-        Player.enabled = IsPaused;
+        Player.enabled = !state;
     }
+
     // ____________________________________________________
     // @ Methods
     private void OnDestroy()

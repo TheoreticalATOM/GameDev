@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameConsole : MonoBehaviour
 {
     private MiniGame mCurrentGame;
-	
+
     public void SetCurrentGame(MiniGame game)
     {
         mCurrentGame = game;
@@ -17,10 +17,9 @@ public class GameConsole : MonoBehaviour
             mCurrentGame.Play();
     }
 
-    public void PauseGame(bool state)
+    public void LockGame(bool state)
     {
-        if (mCurrentGame)
-            mCurrentGame.Pause(state);
+        mCurrentGame.LockControls(state);
     }
 
     public void EndGame()

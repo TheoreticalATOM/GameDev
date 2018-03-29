@@ -14,19 +14,18 @@ public class MiniGameCamera : MonoBehaviour
     private Camera mCamera;
 
     // _______________________________________________________
-    // @ Getter
-    public Transform Target { get; private set; }
-
-    // _______________________________________________________
     // @ Controls
     public void SetTarget(MiniGame.GameView view)
     {
-        Target = view.Target;
+        transform.SetParent(view.Target);
         mCamera.orthographicSize = view.Size;
         mCamera.backgroundColor = view.BackgroundColor;
-        enabled = view.Follow;
 
-        UpdatePosition();
+        // set the parent and local position
+        // using this allows for auto following if need be
+        Vector3 pos = transform.localPosition;
+        pos.x = pos.y = 0.0f;
+        transform.localPosition = pos;
     }
 
     public void ClearTarget()
@@ -39,16 +38,6 @@ public class MiniGameCamera : MonoBehaviour
     private void Awake()
     {
         mCamera = GetComponent<Camera>();
-        enabled = false;
-    }
-    private void Update()
-    {
-        UpdatePosition();
-    }
-
-    private void UpdatePosition()
-    {
-        Vector3 displacement = Target.position - transform.position;
-        transform.Translate(displacement.x, displacement.y, 0.0f);
+        ClearTarget();
     }
 }

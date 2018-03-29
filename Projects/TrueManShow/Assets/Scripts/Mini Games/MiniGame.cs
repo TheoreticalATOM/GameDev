@@ -10,14 +10,14 @@ public abstract class MiniGame : SerializedMonoBehaviour
         public float Size;
         public Color BackgroundColor;
         public Transform Target;
-        public bool Follow = false;
     }
 
     public MiniGameCamera Camera;
     public GameView View;
+    public bool LockControlsOnStart = false;
     public UnityEvent OnGameCompleted;
 
-    protected bool IsPaused { get; private set; }
+    //protected bool IsPaused { get; private set; }
 
     // _________________________________________________________
     // @ Controls
@@ -31,17 +31,19 @@ public abstract class MiniGame : SerializedMonoBehaviour
     public void Play()
     {
         gameObject.SetActive(true);
-        IsPaused = false;
+        //IsPaused = false;
         Camera.SetTarget(View);
 
+        LockControls(LockControlsOnStart);
         OnPlay();
     }
 
-    public void Pause(bool pauseState)
-    {
-        IsPaused = pauseState;
-        OnPaused();
-    }
+    // public void Pause(bool pauseState)
+    // {
+    //     IsPaused = pauseState;
+    //     LockControls(IsPaused);
+    //     OnPaused();
+    // }
 
     [Button]
     public void End()
@@ -50,14 +52,17 @@ public abstract class MiniGame : SerializedMonoBehaviour
         OnEnded();
         Camera.ClearTarget();
     }
+
     #endregion
     // _________________________________________________________
     // @ Inheritance
     protected abstract void OnInit();
     protected abstract void OnPlay();
-    protected virtual void OnPaused() { }
+    // protected virtual void OnPaused() { }
     protected virtual void OnEnded() { }
     protected virtual void OnUpdate() { enabled = false; }
+
+    public virtual void LockControls(bool state) { }
 
     // _________________________________________________________
     // @ Methods
@@ -68,7 +73,7 @@ public abstract class MiniGame : SerializedMonoBehaviour
     }
     private void Update()
     {
-        if (!IsPaused)
-            OnUpdate();
+        // if (!IsPaused)
+        OnUpdate();
     }
 }
