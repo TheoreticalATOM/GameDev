@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using SDE.Data;
+using SDE;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
@@ -34,6 +35,36 @@ public class NarrativeSource : MonoBehaviour, IRuntime
         OnPlayed.Invoke();
         mDialogCoroutine = StartCoroutine(DialogSegementsRoutine(segments, OnFinished));
     }
+    public void PlayOne(Segment segment, System.Action onFinished)
+    {
+        if (mDialogCoroutine != null)
+            StopCoroutine(mDialogCoroutine);
+
+        mDialogCoroutine = StartCoroutine(DialogBasicSegmentRoutine(segment, onFinished));
+    }
+
+    private IEnumerator DialogBasicSegmentRoutine(Segment segment, System.Action onFinished)
+    {
+        DialogUI ui = DialogUISet.GetFirst<DialogUI>();
+        Assert.IsNotNull(ui, "does not have a DialogUI");
+
+        yield return new WaitForSeconds(segment.DelayInSeconds);
+        PlayClip(segment.Clip);
+        ui.SetText(segment.Text);
+        yield return new WaitForSeconds(segment.DurationInSeconds);
+
+        onFinished.TryInvoke();
+        ui.SetText("");
+    }
+
+    private void PlayClip(AudioClip clip)
+    {
+        if (clip)
+        {
+            mSource.clip = clip;
+            mSource.Play();
+        }
+    }
 
     private IEnumerator DialogSegementsRoutine(Segment[] segments, System.Action OnFinished)
     {
@@ -41,11 +72,7 @@ public class NarrativeSource : MonoBehaviour, IRuntime
         foreach (Segment segment in segments)
         {
             yield return new WaitForSeconds(segment.DelayInSeconds);
-            if (segment.Clip)
-            {
-                mSource.clip = segment.Clip;
-                mSource.Play();
-            }
+            PlayClip(segment.Clip);
 
             ui.SetText(segment.Text);
             yield return new WaitForSeconds(segment.DurationInSeconds);

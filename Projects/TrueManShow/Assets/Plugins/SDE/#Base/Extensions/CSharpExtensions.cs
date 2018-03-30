@@ -79,11 +79,10 @@ namespace SDE
             return default(T);
         }
 
-        public static void Set<T>(this T[] list, System.Action<T> setAction)
+        public static void SetAll<T>(this T[] list, System.Action<T> setAction)
         {
             foreach (T item in list)
                 setAction(item);
         }
-
     }
 }

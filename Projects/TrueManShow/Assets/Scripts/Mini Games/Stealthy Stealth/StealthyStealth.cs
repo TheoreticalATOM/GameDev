@@ -43,7 +43,7 @@ public class StealthyStealth : MiniGame
     protected override void OnPlay()
     {
         // disable all the levels
-        Levels.Set(level => level.End());
+        Levels.SetAll(level => level.End());
 
         // renable the first one
         mCurrentLevel = 0;

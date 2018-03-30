@@ -7,7 +7,7 @@ using UnityEngine.Assertions;
 public abstract class Item : MonoBehaviour
 {
 
-    public DialogNode[] nodes;
+    public DialogNodeBase[] nodes;
     public bool CanBePickedUp = true;
     private bool mHasBeenUsedToday;
 
