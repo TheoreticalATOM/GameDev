@@ -3,19 +3,29 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public abstract class DialogNodeBase : SerializedScriptableObject 
-{
-	public abstract void Play(System.Action onFinishedCallback);
 
-	public void Play()
-	{
-		Play(null);
-	}
+public abstract class DialogNodeBase : SerializedScriptableObject
+{
+#if UNITY_EDITOR
+    public static bool IS_DEBUG = true;
+#endif
+
+    public abstract void Play(System.Action onFinishedCallback);
+
+    public void Play()
+    {
+        Play(null);
+    }
 }
 
 [System.Serializable]
 public class Segment
 {
+#if UNITY_EDITOR
+    public static float DEBUG_DELAY = 0.5f;
+    public static float DEBUG_DURATION = 0.5f;
+#endif
+
     [Header("Segment:")]
     [TextArea(3, 15)]
     public string Text;
@@ -26,7 +36,7 @@ public class Segment
     [Button]
     public void MatchDurationWithClipLength()
     {
-        if(Clip)
+        if (Clip)
             DurationInSeconds = Clip.length;
     }
 }

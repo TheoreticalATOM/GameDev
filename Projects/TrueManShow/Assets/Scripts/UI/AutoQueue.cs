@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 
+using SDE.UI;
+
 public class AutoQueue : MonoBehaviour
 {
 	public GameObject TaskParent;
     public Text Title;
     public Text Body;
-    public LoadingBar TimeBar;
+    public Progress TimeBar;
     public GameObject LiveIndicator;
 
 

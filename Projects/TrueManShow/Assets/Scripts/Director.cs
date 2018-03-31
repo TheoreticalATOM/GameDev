@@ -6,6 +6,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
+using SDE.UI;
+
 public class Director : SerializedMonoBehaviour
 {
     // ________________________________________________________ Inspector
@@ -13,12 +15,12 @@ public class Director : SerializedMonoBehaviour
     public DayCycle DayNightCycle;
     public string NextLevelName;
     [TabGroup("Suspicion")] public DirectorAwarenessValue CurrentSuspicion;
-    [TabGroup("Suspicion")] public LoadingBar SuspicionLoadingBar;
+    [TabGroup("Suspicion")] public Progress SuspicionLoadingBar;
     [TabGroup("Suspicion")] public GameOver GameOver;
     [TabGroup("Suspicion")] public UnityEvent MaxedOnSuspicion;
 
     [TabGroup("Appearance")] public DirectorAwarenessValue CurrentAppearance;
-    [TabGroup("Appearance")] public LoadingBar AppearanceLoadingBar;
+    [TabGroup("Appearance")] public Progress AppearanceLoadingBar;
 
     // ________________________________________________________ Methods
     private void Awake()
@@ -43,7 +45,7 @@ public class Director : SerializedMonoBehaviour
 
     private void OnSuspicionChanged(float newValue)
     {
-        SuspicionLoadingBar.UpdateBar(newValue, CurrentSuspicion.MaxValue);
+        SuspicionLoadingBar.UpdateProgress(newValue, CurrentSuspicion.MaxValue);
 
         // if the supisicon exceeds the max suspicion, then call the event
         if (CurrentSuspicion.IsMaxedOut)
@@ -57,7 +59,7 @@ public class Director : SerializedMonoBehaviour
 
     private void OnAppearanceChanged(float newValue)
     {
-        AppearanceLoadingBar.UpdateBar(newValue, CurrentAppearance.MaxValue);
+        AppearanceLoadingBar.UpdateProgress(newValue, CurrentAppearance.MaxValue);
     }    
 
 }

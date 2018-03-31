@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 public class CCCResetCamera : CinematicControllerComponent
 {
-    public float TransitionSpeed = 5.0f;
+    public SmoothRotation Transition;
     public float CloseEnoughRotation;
     public UnityEvent OnReset;
 
@@ -22,7 +22,7 @@ public class CCCResetCamera : CinematicControllerComponent
         while (Quaternion.Angle(resetRot, camRot) > CloseEnoughRotation)
         {
             // slerp the rotation
-            camRot = Quaternion.Slerp(camRot, resetRot, TransitionSpeed * Time.deltaTime);
+            Transition.UpdateRotation(ref camRot, resetRot);
             camTrans.localRotation = camRot;
             yield return null;
         }

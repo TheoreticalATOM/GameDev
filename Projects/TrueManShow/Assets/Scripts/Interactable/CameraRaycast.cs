@@ -65,13 +65,16 @@ public class CameraRaycast : MonoBehaviour
                     //Check if we are pressing the "interact" input to interact 
                     //and if the previous object as returned to the desired location
 
-                    if (Input.GetButtonDown("Interact") && item.CanBePickedUp)
+                    if (Input.GetButtonDown("Interact"))
                     {
-                        InteractableItem = item;
-                        InteractableItem.StartInteract(hit.collider.gameObject, this.gameObject);
-                        item.ItemOutline.eraseRenderer = true;
-                        Interacting = true;
-
+                        ItemPhysics physicsItem = item as ItemPhysics;
+                        if(!physicsItem || physicsItem.CanBePickedUp)
+                        {
+                            InteractableItem = item;
+                            InteractableItem.StartInteract(hit.collider.gameObject, this.gameObject);
+                            item.ItemOutline.eraseRenderer = true;
+                            Interacting = true;
+                        }
                     }
                 }
                 else if (interactedObject != null)

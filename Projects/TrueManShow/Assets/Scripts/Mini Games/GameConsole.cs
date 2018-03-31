@@ -19,7 +19,8 @@ public class GameConsole : MonoBehaviour
 
     public void LockGame(bool state)
     {
-        mCurrentGame.LockControls(state);
+        if(mCurrentGame)
+            mCurrentGame.LockControls(state);
     }
 
     public void EndGame()

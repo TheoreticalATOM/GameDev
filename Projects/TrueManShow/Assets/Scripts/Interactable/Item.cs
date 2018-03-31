@@ -8,16 +8,10 @@ public abstract class Item : MonoBehaviour
 {
 
     public DialogNodeBase[] nodes;
-    public bool CanBePickedUp = true;
     private bool mHasBeenUsedToday;
 
     public cakeslice.Outline ItemOutline { get; private set; }
-
-    public void CanPickup(bool value)
-    {
-        CanBePickedUp = value;
-    }
-
+    
     protected virtual void Awake()
     {
         ItemOutline = GetComponent<cakeslice.Outline>();
@@ -44,19 +38,3 @@ public abstract class Item : MonoBehaviour
     public abstract void StopInteract(GameObject Object, GameObject camera);
 
 }
-
-
-/*
-		int random = Random.Range(0, nodes.Length);
-		nodes[random].Node.Play(()=> {});
-
-        [System.Serializable]
-public class DialogItemPiece
-{
-	public bool HasBeenUsedToday;
-	public DialogNode Node;
-}
-
-public DialogItemPiece[] nodes;
-
- */

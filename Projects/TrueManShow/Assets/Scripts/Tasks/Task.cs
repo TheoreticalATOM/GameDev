@@ -139,7 +139,7 @@ public abstract class Task : LimitedSerializedMonoBehaviour
 			// update the current time every frame from the start-time's reference point
 			CurrentTime = Time.time - mStartTime;
 
-            mOwner.AutoQueue.TimeBar.UpdateBar(CurrentTime, MaximumTime);
+            mOwner.AutoQueue.TimeBar.UpdateProgress(CurrentTime, MaximumTime);
 		};
 
 		// turn on the update method, and track the start time

@@ -5,6 +5,7 @@ using UnityStandardAssets.Characters.FirstPerson;
 
 public class ItemPhysics : Item
 {
+    public bool CanBePickedUp = true;
     private bool posReachIn = false;
     private float speed = 2;
 
@@ -20,10 +21,15 @@ public class ItemPhysics : Item
     public Rigidbody InteractableRigidbody { get; private set; }
     public Collider Collider { get; private set; }
 
+    public void CanPickup(bool value)
+    {
+        CanBePickedUp = value;
+    }
+
     protected override void Awake()
     {
         base.Awake();
-        
+
         InteractableRigidbody = GetComponent<Rigidbody>();
         Collider = GetComponent<Collider>();
 

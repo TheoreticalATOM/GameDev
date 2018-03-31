@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿using UnityEngine;
 namespace SDE.UI
 {
     public class ProgressBar : Progress
@@ -17,7 +14,7 @@ namespace SDE.UI
 
         // _______________________________________
         // @ Data
-        protected Vector2 OriginalSize;
+        protected Vector2 OriginalSize { get; private set; }
 
         // ________________________________________________________ 
         // @ Controls
@@ -27,17 +24,19 @@ namespace SDE.UI
             SetBarRect(ref targetSize, percentage);
             SetBarSize(targetSize);
         }
-        protected virtual void SetBarSize(Vector2 targetSize)
-        {
-			Bar.sizeDelta = targetSize;
-        }
-
+        
         protected void SetBarRect(ref Vector2 size, float value)
         {
             // update the appropriate size, depending on the binary x/y flags
             if ((Direction & EBarDir.Horizontal) == EBarDir.Horizontal) size.x *= value;
             if ((Direction & EBarDir.Vertical) == EBarDir.Vertical) size.y *= value;
         }
+        
+        protected virtual void SetBarSize(Vector2 targetSize)
+        {
+            Bar.sizeDelta = targetSize;
+        }
+
 
         // ________________________________________________________ 
         // @ Methods

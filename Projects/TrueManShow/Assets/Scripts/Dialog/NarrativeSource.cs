@@ -40,18 +40,22 @@ public class NarrativeSource : MonoBehaviour, IRuntime
         if (mDialogCoroutine != null)
             StopCoroutine(mDialogCoroutine);
 
-        mDialogCoroutine = StartCoroutine(DialogBasicSegmentRoutine(segment, onFinished));
+        mDialogCoroutine = StartCoroutine(DialogSingleSegmentRoutine(segment, onFinished));
     }
 
-    private IEnumerator DialogBasicSegmentRoutine(Segment segment, System.Action onFinished)
+    private IEnumerator DialogSingleSegmentRoutine(Segment segment, System.Action onFinished)
     {
+        float delay, duration;
+        GetDelayAndDuration(segment, out delay, out duration);
+
+
         DialogUI ui = DialogUISet.GetFirst<DialogUI>();
         Assert.IsNotNull(ui, "does not have a DialogUI");
 
-        yield return new WaitForSeconds(segment.DelayInSeconds);
+        yield return new WaitForSeconds(delay);
         PlayClip(segment.Clip);
         ui.SetText(segment.Text);
-        yield return new WaitForSeconds(segment.DurationInSeconds);
+        yield return new WaitForSeconds(duration);
 
         onFinished.TryInvoke();
         ui.SetText("");
@@ -66,16 +70,34 @@ public class NarrativeSource : MonoBehaviour, IRuntime
         }
     }
 
+    private void GetDelayAndDuration(Segment segment, out float delay, out float duration)
+    {
+        delay = segment.DelayInSeconds;
+        duration = segment.DurationInSeconds;
+
+        #if UNITY_EDITOR
+        if (DialogNodeBase.IS_DEBUG)
+        {
+            duration = Segment.DEBUG_DURATION;
+            delay = Segment.DEBUG_DELAY;
+        }
+        #endif
+    }
+
     private IEnumerator DialogSegementsRoutine(Segment[] segments, System.Action OnFinished)
     {
+        float delay, duration;
+
         DialogUI ui = DialogUISet.GetFirst<DialogUI>();
         foreach (Segment segment in segments)
         {
-            yield return new WaitForSeconds(segment.DelayInSeconds);
+            GetDelayAndDuration(segment, out delay, out duration);
+
+            yield return new WaitForSeconds(delay);
             PlayClip(segment.Clip);
 
             ui.SetText(segment.Text);
-            yield return new WaitForSeconds(segment.DurationInSeconds);
+            yield return new WaitForSeconds(duration);
         }
 
         ui.SetText("");
