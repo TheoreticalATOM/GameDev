@@ -2,6 +2,8 @@
 using UnityEngine.Events;
 using Sirenix.OdinInspector;
 
+using SDE.Data;
+
 public abstract class MiniGame : SerializedMonoBehaviour
 {
     [System.Serializable]
@@ -16,6 +18,9 @@ public abstract class MiniGame : SerializedMonoBehaviour
     public GameView View;
     public bool LockControlsOnStart = false;
     public UnityEvent OnGameCompleted;
+    public RuntimeSet AudioPool;
+    public AudioClip ThemeSong;
+    public bool LoopThemeSong = true;
 
     //protected bool IsPaused { get; private set; }
 
@@ -34,6 +39,12 @@ public abstract class MiniGame : SerializedMonoBehaviour
         //IsPaused = false;
         Camera.SetTarget(View);
 
+        AudioPool pool = null;
+        if(AudioPool.TryGetFirst<AudioPool>(ref pool)) 
+        {
+            pool.StopSong();
+            pool.PlaySong(ThemeSong, LoopThemeSong);
+        }
         LockControls(LockControlsOnStart);
         OnPlay();
     }

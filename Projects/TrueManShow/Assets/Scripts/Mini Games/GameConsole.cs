@@ -1,9 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Events;
+
+using SDE.Data;
 
 public class GameConsole : MonoBehaviour
 {
+    public TCMaterial TVMaterialToggler;
+    public RuntimeSet Pool;
+    public bool GameIsRunning { get { return mCurrentGame != null; } }
+
     private MiniGame mCurrentGame;
 
     public void SetCurrentGame(MiniGame game)
@@ -14,19 +19,33 @@ public class GameConsole : MonoBehaviour
     public void StartGame()
     {
         if (mCurrentGame)
+        {
+            AudioPool pool = Pool.GetFirst<AudioPool>();
+            pool.IsDefaultAllowed = false;
+            pool.StopDefault();
             mCurrentGame.Play();
+        }
     }
 
     public void LockGame(bool state)
     {
-        if(mCurrentGame)
+        if (mCurrentGame)
             mCurrentGame.LockControls(state);
     }
 
     public void EndGame()
     {
         if (mCurrentGame)
+        {
             mCurrentGame.End();
+
+            AudioPool pool = Pool.GetFirst<AudioPool>();
+            pool.IsDefaultAllowed = true;
+            pool.StopSong();
+
+            if(TVMaterialToggler.IsToggleA)
+                pool.PlayDefaultAndStopAllClips();
+        }
         mCurrentGame = null;
     }
 }

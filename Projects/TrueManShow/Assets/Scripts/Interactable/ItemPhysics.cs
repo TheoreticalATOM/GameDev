@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
 
+[RequireComponent(typeof(AudioClipPlayer))]
 public class ItemPhysics : Item
 {
+    public AudioClip[] PickupSounds;
     public bool CanBePickedUp = true;
     private bool posReachIn = false;
     private float speed = 2;
@@ -15,6 +17,7 @@ public class ItemPhysics : Item
     // Sets the displacement/rotational constraint of the physical object when its picked up
     public RigidbodyConstraints RotationConstraints;
 
+    private AudioClipPlayer mSource;
     private Vector3 NewPosition;
     // stores the original constraints for when the object is deselected (returning it to its original constraints)
     private RigidbodyConstraints mOrigConstraints;
@@ -32,6 +35,8 @@ public class ItemPhysics : Item
 
         InteractableRigidbody = GetComponent<Rigidbody>();
         Collider = GetComponent<Collider>();
+        mSource = GetComponent<AudioClipPlayer>();
+
 
         // store the original constraint on start
         mOrigConstraints = InteractableRigidbody.constraints;
@@ -83,6 +88,9 @@ public class ItemPhysics : Item
     {
         InteractedObject.GetComponent<Rigidbody>().useGravity = false;
         InteractableRigidbody.constraints = RotationConstraints;
+
+        if(PickupSounds.Length > 0)
+            mSource.PlayRandomClip(PickupSounds);
     }
 
     public override void StopInteract(GameObject Object, GameObject camera)

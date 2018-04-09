@@ -4,9 +4,12 @@ using UnityEngine;
 
 using SDE.Input;
 using SDE;
+using SDE.Data;
 
 public class ToaderPlayer : MonoBehaviour
 {
+    public AudioClip MovementClip;
+    public RuntimeSet Pool;
     public int MovingUpPoint = 4;
     public LayerMask FrontColliderCheckMask;
     private AxisUp mVInput = new AxisUp();
@@ -20,7 +23,7 @@ public class ToaderPlayer : MonoBehaviour
 
     private void Awake()
     {
-		mBody = GetComponent<Rigidbody2D>();
+        mBody = GetComponent<Rigidbody2D>();
         mOriginPoint = transform.position;
     }
 
@@ -32,6 +35,8 @@ public class ToaderPlayer : MonoBehaviour
     {
         mBody.MovePosition(transform.position + direction * MiniGameToader.TILE_STEP);
         mBody.velocity = Vector2.zero;
+
+        Pool.GetFirst<AudioPool>().PlayClip(MovementClip);
     }
 
     private void MoveWithInput()
@@ -44,8 +49,8 @@ public class ToaderPlayer : MonoBehaviour
             transform.rotation = MiniGameToader.UP_ROT;
             Move(Vector2.up);
 
-            Collider2D frontCollider = Physics2D.OverlapBox(transform.position - transform.right * MiniGameToader.TILE_STEP, Vector2.one * MiniGameToader.TILE_STEP, 0.0f,  FrontColliderCheckMask);
-            if(!frontCollider || frontCollider.isTrigger)
+            Collider2D frontCollider = Physics2D.OverlapBox(transform.position - transform.right * MiniGameToader.TILE_STEP, Vector2.one * MiniGameToader.TILE_STEP, 0.0f, FrontColliderCheckMask);
+            if (!frontCollider || frontCollider.isTrigger)
                 OnPointsAdded.TryInvoke(MovingUpPoint);
         }
         else if (vInput < 0.0f)

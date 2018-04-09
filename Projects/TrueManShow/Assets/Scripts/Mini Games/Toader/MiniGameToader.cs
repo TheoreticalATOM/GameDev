@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+using SDE.Data;
+
 public class MiniGameToader : MiniGame
 {
     // ____________________________________________________
@@ -36,6 +38,8 @@ public class MiniGameToader : MiniGame
     [Space(2.0f)]
     public GameObject GameOverView;
     public Text GameOverScoreLabel;
+    public AudioClip GoalReachedClip;
+    public AudioClip PlayerDiedClip;
 
     // ____________________________________________________
     // @ Data
@@ -140,6 +144,10 @@ public class MiniGameToader : MiniGame
     // @ Events
     private void OnGoalReached(int amount)
     {
+        AudioPool pool = null;
+        if (AudioPool.TryGetFirst<AudioPool>(ref pool))
+            pool.PlayClip(GoalReachedClip);
+
         UpdateScore(amount);
         if (++mGoalsReachedCount >= mGoals.Length)
         {
@@ -151,6 +159,10 @@ public class MiniGameToader : MiniGame
     }
     private void OnDied()
     {
+        AudioPool pool = null;
+        if (AudioPool.TryGetFirst<AudioPool>(ref pool))
+            pool.PlayClip(PlayerDiedClip);
+
         LivesLabel.text = (--mLives).ToString();
         if (mLives <= 0)
             ShowGameOver(true);
