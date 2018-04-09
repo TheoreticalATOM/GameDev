@@ -229,5 +229,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
         {
             MouseLook.Init(transform, mCamera.transform);
         }
+
+        public void ResetMovement()
+        {
+            mMoveDir = Vector3.zero;
+        }
     }
 }

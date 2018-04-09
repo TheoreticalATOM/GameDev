@@ -48,6 +48,8 @@ public class ItemPhysics : Item
 
             // Reset it back to the original constraint
             InteractableRigidbody.constraints = mOrigConstraints;
+            player.GetComponent<CameraRaycast>().FirstPerson.DisableCamera = false;
+            player.GetComponent<CameraRaycast>().FirstPerson.DisableMovement = false;
             return false;
         }
         else

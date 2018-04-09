@@ -39,6 +39,7 @@ public class Player : Resetable
     public void LockMovement(bool value)
     {
         FirstPerson.DisableMovement = value;
+        FirstPerson.ResetMovement();
     }
     public void Lock(bool value)
     {

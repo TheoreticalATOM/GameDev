@@ -7,6 +7,7 @@ using UnityEngine.Events;
 using UnityStandardAssets.Characters.FirstPerson;
 
 using SDE;
+using UnityEngine.Assertions;
 
 public class CinemaCam : SerializedMonoBehaviour
 {
@@ -54,6 +55,14 @@ public class CinemaCam : SerializedMonoBehaviour
 
     public void RegisterKeyEvent()
     {
+        /* if there is no key event registered, then ignore the request, 
+        but drop a notifiying warning */
+        if(mKeyEvents.Count < 1)
+        {
+            Debug.LogWarning("Requesting a KeyEvent Registration, but there are no key events triggers added");
+            return;
+        }
+        
         // do only one item at a time, allowing for calling multiple events iteratively
         mKeyEvents.Dequeue().Invoke();
     }
