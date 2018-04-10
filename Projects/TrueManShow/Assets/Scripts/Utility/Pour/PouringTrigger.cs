@@ -4,22 +4,13 @@ using UnityEngine;
 public class PouringTrigger : SerializedMonoBehaviour
 {
     public ParticleSystem Particles;
-    //public BowlFilling Bowl;
-    // public Color BowlColourChange;
-    // public float FillSpeed;
+    public AudioSource Source;
 
     public Vector3 ColliderOffset;
     public Vector3 ColliderSize;
     public LayerMask ColliderMask;
 
     private Collider[] mColliderBuffer = new Collider[1];
-    //private bool mHasFinishedPouring;
-    //private bool mHasStartedToPour;
-
-    // private void Awake()
-    // {
-    //     mHasFinishedPouring = mHasStartedToPour = false;
-    // }
 
     private void OnDrawGizmos()
     {
@@ -37,6 +28,7 @@ public class PouringTrigger : SerializedMonoBehaviour
         if (Mathf.Atan2(towardsPoint.y, towardsPoint.x) > 0.0f)
         {
             Particles.Stop();
+            Source.Stop();
             return null;
         }
 
@@ -44,48 +36,13 @@ public class PouringTrigger : SerializedMonoBehaviour
         if(!Particles.isPlaying)
             Particles.Play();
 
+        if(!Source.isPlaying)
+            Source.Play();
+
         // Check collision area if it hit a bowl
         Vector3 boxPos = particlePos + ColliderOffset;
         Physics.OverlapBoxNonAlloc(boxPos, ColliderSize, mColliderBuffer, Quaternion.identity, ColliderMask);
 
         return mColliderBuffer[0];
     }
-
-    // void FixedUpdate()
-    // {
-    //     Vector3 particlePos = Particles.transform.position;
-    //     Vector3 towardsPoint = particlePos - transform.position;
-
-    //     if (Mathf.Atan2(towardsPoint.y, towardsPoint.x) > 0.0f)
-    //     {
-    //         Bowl.ClearAddBowlManual();
-    //         Particles.Stop();
-    //         return;
-    //     }
-
-    //     // Play particle system
-    //     Particles.Play();
-
-    //     // Check collision area if it hit a bowl
-    //     Vector3 boxPos = particlePos + ColliderOffset;
-    //     Physics.OverlapBoxNonAlloc(boxPos, ColliderSize, mColliderBuffer, Quaternion.identity, ColliderMask);
-
-    //     if (!mHasFinishedPouring && mColliderBuffer[0])
-    //     {
-    //         if (!mHasStartedToPour)
-    //         {
-    //             mHasStartedToPour = true;
-    //             Bowl.SetAddBowlManual(BowlColourChange, FillSpeed);
-    //         }
-    //         else if (Bowl.UpdateAddBowlManual())
-    //         {
-    //             InventoryVerifier inv = mColliderBuffer[0].GetComponent<InventoryVerifier>();
-    //             if (inv) inv.ExternalInsertItemNonReaction(gameObject);
-
-    //             Debug.Log("Hello");
-    //             mHasFinishedPouring = true; 
-    //             mHasStartedToPour = false;
-    //         }
-    //     }
-    // }
 }

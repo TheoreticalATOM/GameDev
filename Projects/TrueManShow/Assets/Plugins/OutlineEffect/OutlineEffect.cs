@@ -240,17 +240,6 @@ namespace cakeslice
             outlineCamera.Render();
         }
 
-        private void OnEnable()
-        {
-            Outline[] o = FindObjectsOfType<Outline>();
-
-            foreach(Outline oL in o)
-            {
-                oL.enabled = false;
-                oL.enabled = true;
-            }
-        }
-
         void OnDestroy()
         {
             if(renderTexture != null)

@@ -80,6 +80,7 @@ public class MiniGameToader : MiniGame
         // Reset the goals
         foreach (ToaderGoal goal in mGoals)
             goal.ResetGoal();
+        mGoalsReachedCount = 0;
 
         RandomRespawn();
     }

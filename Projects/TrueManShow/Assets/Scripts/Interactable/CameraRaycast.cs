@@ -25,10 +25,6 @@ public class CameraRaycast : MonoBehaviour
     public bool Interacting = false;
     public LayerMask InteractiveMask;
 
-    // Use this for initialization
-    void Start()
-    {
-    }
 
     // void OnGUI () {
     // 	//crosshairImage.Resize ((crosshairImage.width / 2), (crosshairImage.height / 2), crosshairImage.format);
@@ -46,7 +42,7 @@ public class CameraRaycast : MonoBehaviour
         //Check if we are curently already interacting with an object
         if (!Interacting)
         {
-            RaycastDist = CalcRayDist(MinRaycastDist, MaxRaycastDist, AngleMaxReach);
+            RaycastDist = Mathf.Round(CalcRayDist(MinRaycastDist, MaxRaycastDist, AngleMaxReach));
             Debug.DrawRay(transform.position, transform.forward * RaycastDist);
             //Throws a ray and checks if we hit any object in the world
             if (Physics.Raycast(ray, out hit, RaycastDist, InteractiveMask))
@@ -55,10 +51,10 @@ public class CameraRaycast : MonoBehaviour
                 //Checks what tag the object has
                 if (item)
                 {
-                    item.ItemOutline.eraseRenderer = false;
+                    item.ItemOutline.enabled = true;
                     if (interactedObject != null)
                         if (interactedObject != item)
-                            interactedObject.ItemOutline.eraseRenderer = true;
+                            interactedObject.ItemOutline.enabled = false;
 
                     interactedObject = item;
 
@@ -72,19 +68,19 @@ public class CameraRaycast : MonoBehaviour
                         {
                             InteractableItem = item;
                             InteractableItem.StartInteract(hit.collider.gameObject, this.gameObject);
-                            item.ItemOutline.eraseRenderer = true;
+                            item.ItemOutline.enabled = false;
                             Interacting = true;
                         }
                     }
                 }
                 else if (interactedObject != null)
                 {
-                    interactedObject.ItemOutline.eraseRenderer = true;
+                    interactedObject.ItemOutline.enabled = false;
                 }
             }
             else if (interactedObject != null)
             {
-                interactedObject.ItemOutline.eraseRenderer = true;
+                interactedObject.ItemOutline.enabled = false;
             }
         }
         else

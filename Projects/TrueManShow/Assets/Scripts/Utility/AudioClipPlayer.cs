@@ -7,11 +7,12 @@ using SDE;
 public class AudioClipPlayer : SerializedMonoBehaviour
 {
     [MinMaxSlider(-3.0f, 3.0f, true)] public Vector2 MinMaxPitch = new Vector2(0.8f, 1.0f);
-    private AudioSource mSource;
+    public AudioSource mSource;
 
     private void Awake()
     {
-        mSource = GetComponent<AudioSource>();
+        if(!mSource)
+            mSource = GetComponent<AudioSource>();
     }
 
     public void PlayClip(AudioClip clip)

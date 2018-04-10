@@ -20,9 +20,12 @@ public class GameConsole : MonoBehaviour
     {
         if (mCurrentGame)
         {
+
             AudioPool pool = Pool.GetFirst<AudioPool>();
             pool.IsDefaultAllowed = false;
             pool.StopDefault();
+            if(!TVMaterialToggler.IsToggleA)
+                pool.DeafenSong();
             mCurrentGame.Play();
         }
     }

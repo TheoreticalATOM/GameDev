@@ -15,7 +15,8 @@ public abstract class Item : MonoBehaviour
     protected virtual void Awake()
     {
         ItemOutline = GetComponent<cakeslice.Outline>();
-        ItemOutline.eraseRenderer = true; // clear the renderer on the start
+        ItemOutline.eraseRenderer = false; // clear the renderer on the start
+        ItemOutline.enabled = false;
     }
 
     public void StartInteract(GameObject Object, GameObject camera)

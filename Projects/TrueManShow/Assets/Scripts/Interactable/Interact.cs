@@ -116,7 +116,7 @@ public class Interact : MonoBehaviour {
         player = camera;
         player.GetComponent<CameraRaycast>().Interacting = true;
         interactedObject = Object;
-        interactedObject.transform.GetComponent<cakeslice.Outline>().eraseRenderer = true;
+        interactedObject.transform.GetComponent<cakeslice.Outline>().enabled = false;
         switch (interactedObject.tag)
         {
             case "InteractableObject":
