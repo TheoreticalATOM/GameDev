@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
 
 public class Player : Resetable
@@ -46,9 +44,6 @@ public class Player : Resetable
         LockCamera(value);
         LockMovement(value);
     }
-
-
-    
 
     public override void ResetObject()
     {

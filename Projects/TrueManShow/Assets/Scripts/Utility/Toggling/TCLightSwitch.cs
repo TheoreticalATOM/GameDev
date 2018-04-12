@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TCLightSwitch : TogglerComponent
+public class TCLightSwitch : TogglerComponentBool
 {
-	public Light Light;	
-    protected override void OnToggleA()
-    {
-		Light.enabled = !Light.enabled;
-    }
-
-    protected override void OnToggleB()
-    {
-		Light.enabled = !Light.enabled;
-    }
+	public Light Light;
+	protected override void OnToggled(bool value)
+	{
+		Light.enabled = value;
+	}
+	
+	private void Reset()
+	{
+		if (!Light) Light = GetComponent<Light>();
+	}
 }

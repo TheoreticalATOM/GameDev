@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+
+[RequireComponent(typeof(Toggler))]
 public abstract class TogglerComponent : MonoBehaviour
 {
     public bool IsToggleA { get; private set; }
