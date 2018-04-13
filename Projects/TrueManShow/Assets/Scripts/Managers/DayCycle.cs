@@ -2,12 +2,12 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-
 [System.Serializable]
 public class DayProperty
 {
-    [TabGroup("General")] public Material SkyBox;
+    [TabGroup("General")] public Color Colour;
     [TabGroup("General")] public bool IsDayTime;
+    [TabGroup("General")] public Texture2D[] LightMaps;
     [TabGroup("Component Affection")] public DayCycleReactor[] AffectedComponents;
     [TabGroup("Events")] public UnityEvent OnSelected;
     [TabGroup("Events")] public UnityEvent OnDeselected;
@@ -66,8 +66,12 @@ public class DayCycle : SerializedMonoBehaviour
 
     private void UpdateCycleData()
     {
-        DayProperty prop = DailyProperties[mSegmentIndex];;
-        RenderSettings.skybox = prop.SkyBox;
+        DayProperty prop = DailyProperties[mSegmentIndex];
+
+        LightmapData[] lightmapDatas = LightmapSettings.lightmaps;
+        for (int i = 0; i < prop.LightMaps.Length; i++)
+            lightmapDatas[i].lightmapColor = prop.LightMaps[i];
+        LightmapSettings.lightmaps = lightmapDatas;
         
         foreach (DayCycleReactor affected in prop.AffectedComponents) 
             affected.OnReact();
