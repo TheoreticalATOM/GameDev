@@ -7,6 +7,8 @@ public class DayProperty
 {
     [TabGroup("General")] public Color Colour;
     [TabGroup("General")] public bool IsDayTime;
+    [TabGroup("Time"), Range(0, 23)] public int TimeHour;
+    [TabGroup("Time"), Range(0, 59)] public int TimeMinute;
     [TabGroup("General")] public Texture2D[] LightMaps;
     [TabGroup("Component Affection")] public DayCycleReactor[] AffectedComponents;
     [TabGroup("Events")] public UnityEvent OnSelected;
@@ -25,11 +27,19 @@ public class DayCycle : SerializedMonoBehaviour
     [TabGroup("Details")] public Player Player;
     [TabGroup("Details")] public UnityEvent OnAllSegmentsCompleted;
     [TabGroup("Day Segments")] public DayProperty[] DailyProperties;
+    [TabGroup("Clocks")] public Clock[] Clocks;
 
 
     private int mSegmentIndex = 0;
     
     public bool IsDayTime { get { return DailyProperties[mSegmentIndex].IsDayTime; } }
+
+    [TabGroup("Clocks"), Button()]
+    public void FindClocks()
+    {
+        Clocks = FindObjectsOfType<Clock>();
+    }
+    
     
     [Button()]
     public void MoveToNextDay()
@@ -73,7 +83,15 @@ public class DayCycle : SerializedMonoBehaviour
             lightmapDatas[i].lightmapColor = prop.LightMaps[i];
         LightmapSettings.lightmaps = lightmapDatas;
         
-        foreach (DayCycleReactor affected in prop.AffectedComponents) 
+        foreach (DayCycleReactor affected in prop.AffectedComponents)
             affected.OnReact();
+
+        // Set the callback
+        if (Clocks.Length > 0)
+            Clocks[0].DurationMethodReachedCallback += MoveToNextDay;
+        
+        // Start Clocks
+        foreach (Clock clock in Clocks)
+            clock.StartTime(prop.TimeHour, prop.TimeMinute, 60);
     }
 }

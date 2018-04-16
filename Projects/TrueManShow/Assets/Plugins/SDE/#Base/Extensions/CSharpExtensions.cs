@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Collections.Generic;
 
 namespace SDE
 {
@@ -11,11 +12,23 @@ namespace SDE
             if (action != null)
                 action();
         }
+
         public static void TryInvoke<T>(this System.Action<T> action, T value)
         {
             if (action != null)
                 action(value);
         }
+
+        public static void RemoveAllListeners(this System.Action action)
+        {
+            if (action == null)
+                return;
+            
+            foreach (System.Delegate del in action.GetInvocationList())
+                action -= (System.Action) del;
+        }
+        
+
 
         // _________________________________________________
         // Queues
@@ -62,7 +75,7 @@ namespace SDE
                 list[n] = temp;
             }
         }
-
+        
         public delegate bool DelItemComparision<T>(T item);
         public static bool Contains<T>(this T[] list, DelItemComparision<T> comparision)
         {

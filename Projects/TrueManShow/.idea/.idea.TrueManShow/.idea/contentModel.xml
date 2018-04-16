@@ -639,8 +639,8 @@
             </e>
           </e>
           <e p="Clocks" t="Include">
+            <e p="Clock.cs" t="Include" />
             <e p="Clockanimate.cs" t="Include" />
-            <e p="Clocks.cs" t="Include" />
             <e p="DigitalClock.cs" t="Include" />
           </e>
           <e p="Data" t="Include">
@@ -724,6 +724,18 @@
             <e p="GameConsole.cs" t="Include" />
             <e p="MiniGame.cs" t="Include" />
             <e p="MiniGameCamera.cs" t="Include" />
+            <e p="Space Invaders" t="Include">
+              <e p="BaseDefeat.cs" t="Include" />
+              <e p="BaseHealth.cs" t="Include" />
+              <e p="Bullet_Controller.cs" t="Include" />
+              <e p="EnemyBulletController.cs" t="Include" />
+              <e p="EnemyController.cs" t="Include" />
+              <e p="MiniGameSpaceInvaders.cs" t="Include" />
+              <e p="Player_Movement.cs" t="Include" />
+              <e p="PlayerScore.cs" t="Include" />
+              <e p="RestartLevel.cs" t="Include" />
+              <e p="SIGameOver.cs" t="Include" />
+            </e>
             <e p="Stealthy Stealth" t="Include">
               <e p="StealthyStealth.cs" t="Include" />
               <e p="TextFlash.cs" t="Include" />
@@ -823,9 +835,7 @@
       <e p="Library" t="ExcludeRecursive" />
       <e p="obj" t="ExcludeRecursive" />
       <e p="packages" t="ExcludeRecursive" />
-      <e p="Temp" t="ExcludeRecursive">
-        <e p="bin" t="ExcludeRecursive" />
-      </e>
+      <e p="Temp\bin" t="ExcludeRecursive" />
       <e p="TrueManShow.sln" t="IncludeFlat" />
     </e>
   </component>
