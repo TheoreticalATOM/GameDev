@@ -5,6 +5,7 @@ public class ItemApperance : Item
 {
     public float objApp = 10f;
     bool itemUsed = false;
+    public bool oneUse;
     public DirectorAwarenessValue AppearanceVariable;
     public UnityEvent OnInteracted;
 
@@ -13,7 +14,7 @@ public class ItemApperance : Item
 
     protected override void OnStartInteract(GameObject Object, GameObject player)
     {
-        if (itemUsed == false)
+        /*if (itemUsed == false)
         {
             AppearanceVariable.UpdateValue(objApp);
             itemUsed = true;
@@ -22,6 +23,15 @@ public class ItemApperance : Item
                 gameObject.SetActive(false);// Destroy(gameObject);
             }
             OnInteracted.Invoke();
-        }
+        }*/
+
+        OnInteracted.Invoke();
+        
+        if (itemUsed)
+            return;
+
+        AppearanceVariable.UpdateValue(objApp);
+        gameObject.SetActive(!oneUse);
+        itemUsed = true;
     }
 }

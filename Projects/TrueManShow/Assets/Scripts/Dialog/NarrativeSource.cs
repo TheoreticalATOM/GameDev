@@ -27,13 +27,13 @@ public class NarrativeSource : MonoBehaviour, IRuntime
     /// Will play the given audio clip at it's location, and invoke a OnPlayed event.
     /// Any current clip will be overwritten
     /// </summary>
-    public void Play(Segment[] segments, System.Action OnFinished)
+    public void Play(Segment[] segments, System.Action onFinished)
     {
         if (mDialogCoroutine != null)
             StopCoroutine(mDialogCoroutine);
 
         OnPlayed.Invoke();
-        mDialogCoroutine = StartCoroutine(DialogSegementsRoutine(segments, OnFinished));
+        mDialogCoroutine = StartCoroutine(DialogSegementsRoutine(segments, onFinished));
     }
     public void PlayOne(Segment segment, System.Action onFinished)
     {
@@ -48,7 +48,6 @@ public class NarrativeSource : MonoBehaviour, IRuntime
         float delay, duration;
         GetDelayAndDuration(segment, out delay, out duration);
 
-
         DialogUI ui = DialogUISet.GetFirst<DialogUI>();
         Assert.IsNotNull(ui, "does not have a DialogUI");
 
@@ -57,8 +56,8 @@ public class NarrativeSource : MonoBehaviour, IRuntime
         ui.SetText(segment.Text);
         yield return new WaitForSeconds(duration);
 
+        ui.ClearText();
         onFinished.TryInvoke();
-        ui.SetText("");
     }
 
     private void PlayClip(AudioClip clip)
@@ -84,7 +83,7 @@ public class NarrativeSource : MonoBehaviour, IRuntime
         #endif
     }
 
-    private IEnumerator DialogSegementsRoutine(Segment[] segments, System.Action OnFinished)
+    private IEnumerator DialogSegementsRoutine(Segment[] segments, System.Action onFinished)
     {
         float delay, duration;
 
@@ -100,10 +99,10 @@ public class NarrativeSource : MonoBehaviour, IRuntime
             yield return new WaitForSeconds(duration);
         }
 
-        ui.SetText("");
+        ui.ClearText();
 
-        if (OnFinished != null)
-            OnFinished();
+        if (onFinished != null)
+            onFinished();
 
         OnStopped.Invoke();
     }
