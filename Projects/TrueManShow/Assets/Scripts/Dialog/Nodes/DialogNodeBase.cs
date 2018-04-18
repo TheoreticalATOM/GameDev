@@ -7,7 +7,7 @@ using UnityEngine;
 public abstract class DialogNodeBase : SerializedScriptableObject
 {
 #if UNITY_EDITOR
-    public static bool IS_DEBUG = true;
+    public static bool IS_DEBUG = false;
 #endif
 
     public abstract void Play(System.Action onFinishedCallback);

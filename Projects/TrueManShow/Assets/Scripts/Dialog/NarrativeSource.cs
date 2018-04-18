@@ -11,6 +11,11 @@ public class NarrativeSource : MonoBehaviour, IRuntime
     public RuntimeSet Source;
     public RuntimeSet DialogUISet;
 
+#if UNITY_EDITOR
+    public bool LogSegments;
+    private Coroutine mLogRoutine;
+#endif
+
     public UnityEvent OnPlayed;
     public UnityEvent OnStopped;
 
@@ -35,6 +40,7 @@ public class NarrativeSource : MonoBehaviour, IRuntime
         OnPlayed.Invoke();
         mDialogCoroutine = StartCoroutine(DialogSegementsRoutine(segments, onFinished));
     }
+
     public void PlayOne(Segment segment, System.Action onFinished)
     {
         if (mDialogCoroutine != null)
@@ -50,14 +56,24 @@ public class NarrativeSource : MonoBehaviour, IRuntime
 
         DialogUI ui = DialogUISet.GetFirst<DialogUI>();
         Assert.IsNotNull(ui, "does not have a DialogUI");
-
         yield return new WaitForSeconds(delay);
+
         PlayClip(segment.Clip);
         ui.SetText(segment.Text);
         yield return new WaitForSeconds(duration);
-
+        
         ui.ClearText();
         onFinished.TryInvoke();
+    }
+
+    private IEnumerator PrintAudioStartTimeRoute()
+    {
+        float startTime = Time.time;
+        while (true)
+        {
+            Debug.Log(Time.time - startTime);
+            yield return null;
+        }
     }
 
     private void PlayClip(AudioClip clip)
@@ -74,13 +90,13 @@ public class NarrativeSource : MonoBehaviour, IRuntime
         delay = segment.DelayInSeconds;
         duration = segment.DurationInSeconds;
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         if (DialogNodeBase.IS_DEBUG)
         {
             duration = Segment.DEBUG_DURATION;
             delay = Segment.DEBUG_DELAY;
         }
-        #endif
+#endif
     }
 
     private IEnumerator DialogSegementsRoutine(Segment[] segments, System.Action onFinished)
@@ -96,7 +112,16 @@ public class NarrativeSource : MonoBehaviour, IRuntime
             PlayClip(segment.Clip);
 
             ui.SetText(segment.Text);
+            
+            #if UNITY_EDITOR
+            if (LogSegments) mLogRoutine = StartCoroutine(PrintAudioStartTimeRoute());
+            #endif
+            
             yield return new WaitForSeconds(duration);
+
+            #if UNITY_EDITOR
+            if (LogSegments) StopCoroutine(mLogRoutine);
+            #endif            
         }
 
         ui.ClearText();

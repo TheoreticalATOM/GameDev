@@ -89,6 +89,9 @@ public class ItemPhysics : Item
         InteractedObject.GetComponent<Rigidbody>().useGravity = false;
         InteractableRigidbody.constraints = RotationConstraints;
 
+        InteractableRigidbody.velocity = Vector3.zero;
+        InteractableRigidbody.angularVelocity = Vector3.zero;
+        
         if(PickupSounds.Length > 0)
             mSource.PlayRandomClip(PickupSounds);
     }

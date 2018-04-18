@@ -20,7 +20,7 @@ public abstract class ItemPhysicsInteract : ItemPhysics
     protected override void OnStartInteract(GameObject InteractedObject, GameObject player)
     {
         base.OnStartInteract(InteractedObject, player);
-
+        
         // if there are any registered verifications, then go through them all
         while (mRegisteredVerifications.Count > 0)
             mRegisteredVerifications.Pop()();

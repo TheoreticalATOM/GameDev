@@ -45,8 +45,6 @@ public class MiniGameToader : MiniGame
     // @ Data
     private int mScore;
     private int mLives;
-    private int mTimeCounter;
-    private float mLastTime = 0.0f;
 
     private ToaderGoal[] mGoals;
     private int mGoalsReachedCount;
@@ -71,9 +69,6 @@ public class MiniGameToader : MiniGame
 
         mLives = MaxLives;
         LivesLabel.text = mLives.ToString();
-
-        mLastTime = Time.time;
-        mTimeCounter = 0;
 
         ShowGameOver(false);
 
