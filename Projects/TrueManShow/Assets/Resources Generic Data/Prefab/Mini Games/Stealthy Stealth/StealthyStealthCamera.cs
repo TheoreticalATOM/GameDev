@@ -38,3 +38,4 @@ public class StealthyStealthCamera : MonoBehaviour
         mPlayer = null;
     }
 }
+

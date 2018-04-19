@@ -657,6 +657,7 @@
             </e>
           </e>
           <e p="Dialog" t="Include">
+            <e p="AudienceReaction.cs" t="Include" />
             <e p="DialogPlayer.cs" t="Include" />
             <e p="DialogTree.cs" t="Include" />
             <e p="DialogUI.cs" t="Include" />
@@ -694,6 +695,7 @@
             <e p="Reactions" t="Include">
               <e p="IIReaction.cs" t="Include" />
               <e p="IIReactionHide.cs" t="Include" />
+              <e p="IIReactionMoveToLocalCentre.cs" t="Include" />
               <e p="IIReactionMoveToPlace.cs" t="Include" />
             </e>
             <e p="Response" t="Include">
@@ -844,7 +846,9 @@
       <e p="Library" t="ExcludeRecursive" />
       <e p="obj" t="ExcludeRecursive" />
       <e p="packages" t="ExcludeRecursive" />
-      <e p="Temp\bin" t="ExcludeRecursive" />
+      <e p="Temp" t="ExcludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+      </e>
       <e p="TrueManShow.sln" t="IncludeFlat" />
     </e>
   </component>

@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 1cfe1b01a23f88d4fb8fff20655bee62
-timeCreated: 1524053524
+guid: d686b5e2eeef5624f8e7f5bdf1c9a8a9
+timeCreated: 1524147233
 licenseType: Pro
 ModelImporter:
   serializedVersion: 19
@@ -9,7 +9,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: GG_DOOR
+    4300000: GG_DOOR002
     9500000: //RootNode
   materials:
     importMaterials: 1

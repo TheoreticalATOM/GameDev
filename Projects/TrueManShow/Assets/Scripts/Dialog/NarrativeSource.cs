@@ -32,37 +32,38 @@ public class NarrativeSource : MonoBehaviour, IRuntime
     /// Will play the given audio clip at it's location, and invoke a OnPlayed event.
     /// Any current clip will be overwritten
     /// </summary>
-    public void Play(Segment[] segments, System.Action onFinished)
+    public void Play(Segment[] segments, System.Action onFinished, bool showDialog = true)
     {
         if (mDialogCoroutine != null)
             StopCoroutine(mDialogCoroutine);
 
         OnPlayed.Invoke();
-        mDialogCoroutine = StartCoroutine(DialogSegementsRoutine(segments, onFinished));
+        mDialogCoroutine = StartCoroutine(DialogSegementsRoutine(segments, onFinished, showDialog));
     }
 
-    public void PlayOne(Segment segment, System.Action onFinished)
+    public void PlayOne(Segment segment, System.Action onFinished, bool showDialog = true)
     {
         if (mDialogCoroutine != null)
             StopCoroutine(mDialogCoroutine);
 
-        mDialogCoroutine = StartCoroutine(DialogSingleSegmentRoutine(segment, onFinished));
+        mDialogCoroutine = StartCoroutine(DialogSingleSegmentRoutine(segment, onFinished, showDialog));
     }
 
-    private IEnumerator DialogSingleSegmentRoutine(Segment segment, System.Action onFinished)
+    private IEnumerator DialogSingleSegmentRoutine(Segment segment, System.Action onFinished, bool showDialog)
     {
         float delay, duration;
         GetDelayAndDuration(segment, out delay, out duration);
-
+        
         DialogUI ui = DialogUISet.GetFirst<DialogUI>();
         Assert.IsNotNull(ui, "does not have a DialogUI");
-        yield return new WaitForSeconds(delay);
-
-        PlayClip(segment.Clip);
-        ui.SetText(segment.Text);
-        yield return new WaitForSeconds(duration);
         
-        ui.ClearText();
+        yield return new WaitForSeconds(delay);
+        PlayClip(segment.Clip);
+
+        if (showDialog) ui.SetText(segment.Text);
+        yield return new WaitForSeconds(duration);
+        if (showDialog) ui.ClearText();
+        
         onFinished.TryInvoke();
     }
 
@@ -99,7 +100,7 @@ public class NarrativeSource : MonoBehaviour, IRuntime
 #endif
     }
 
-    private IEnumerator DialogSegementsRoutine(Segment[] segments, System.Action onFinished)
+    private IEnumerator DialogSegementsRoutine(Segment[] segments, System.Action onFinished, bool showDialog)
     {
         float delay, duration;
 
@@ -111,7 +112,7 @@ public class NarrativeSource : MonoBehaviour, IRuntime
             yield return new WaitForSeconds(delay);
             PlayClip(segment.Clip);
 
-            ui.SetText(segment.Text);
+            if (showDialog) ui.SetText(segment.Text);
             
             #if UNITY_EDITOR
             if (LogSegments) mLogRoutine = StartCoroutine(PrintAudioStartTimeRoute());
@@ -124,7 +125,7 @@ public class NarrativeSource : MonoBehaviour, IRuntime
             #endif            
         }
 
-        ui.ClearText();
+        if (showDialog) ui.ClearText();
 
         if (onFinished != null)
             onFinished();
