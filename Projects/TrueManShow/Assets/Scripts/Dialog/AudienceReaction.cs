@@ -1,36 +1,29 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using NUnit.Framework;
+﻿using System.Collections.Generic;
+using SDE;
 using SDE.Data;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using Assert = UnityEngine.Assertions.Assert;
+using UnityEngine.Assertions;
 
-public enum EReactionTypes
-{
-    Haha, Aw, Yay
-}
-
-
+[CreateAssetMenu(fileName = "Audience Reaction", menuName = "Dialog/Audience Reaction", order = 0)]
 public class AudienceReaction : SerializedScriptableObject
 {
-    public AudioClip[] Reactions;
+    public Dictionary<ScriptableEnum, AudioClip[]> Reactions;
     public RuntimeSet ReactionSource;
-//
-//    public void PlayReaction(EReactionTypes type, System.Action onReactionComplete = null)
-//    {
-//        NarrativeSource source = ReactionSource.GetFirst<NarrativeSource>();
-//        Assert.IsNotNull(source, name + " : has incorrect narrative runtime set");
-//        
-//        source.PlayOne();
-//    }
-//
-//    private AudioClip GetRandomClip(EReactionTypes type)
-//    {
-//        if (!Reactions.ContainsKey(type))
-//            return null;
-//        
-//        AudioClip[] clips = Reactions[type];
-//    }
+    
+    public void PlayReaction(ScriptableEnum type)
+    {
+        NarrativeSource source = ReactionSource.GetFirst<NarrativeSource>();
+        Assert.IsNotNull(source, name + " : has incorrect narrative runtime set");
+
+        AudioClip clip = GetRandomClip(type);
+        if(clip)
+            source.PlayOneShotAudioClip(clip);
+    }
+
+    private AudioClip GetRandomClip(ScriptableEnum type)
+    {
+        return !Reactions.ContainsKey(type) ? null : Reactions[type].RandomValue();
+    }
     
 }

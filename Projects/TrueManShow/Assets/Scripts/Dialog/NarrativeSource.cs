@@ -32,38 +32,46 @@ public class NarrativeSource : MonoBehaviour, IRuntime
     /// Will play the given audio clip at it's location, and invoke a OnPlayed event.
     /// Any current clip will be overwritten
     /// </summary>
-    public void Play(Segment[] segments, System.Action onFinished, bool showDialog = true)
+    public void Play(Segment[] segments, System.Action onFinished)
     {
         if (mDialogCoroutine != null)
             StopCoroutine(mDialogCoroutine);
 
         OnPlayed.Invoke();
-        mDialogCoroutine = StartCoroutine(DialogSegementsRoutine(segments, onFinished, showDialog));
+        
+        DialogUI ui = DialogUISet.GetFirst<DialogUI>();
+        Assert.IsNotNull(ui, "does not have a DialogUI");
+        mDialogCoroutine = StartCoroutine(DialogSegementsRoutine(segments, onFinished));
     }
 
-    public void PlayOne(Segment segment, System.Action onFinished, bool showDialog = true)
+    public void PlayOne(Segment segment, System.Action onFinished)
     {
         if (mDialogCoroutine != null)
             StopCoroutine(mDialogCoroutine);
 
-        mDialogCoroutine = StartCoroutine(DialogSingleSegmentRoutine(segment, onFinished, showDialog));
+        mDialogCoroutine = StartCoroutine(DialogSingleSegmentRoutine(segment, onFinished));
     }
 
-    private IEnumerator DialogSingleSegmentRoutine(Segment segment, System.Action onFinished, bool showDialog)
+    public void PlayOneShotAudioClip(AudioClip clip)
+    {
+        mSource.PlayOneShot(clip);
+    }
+
+    private IEnumerator DialogSingleSegmentRoutine(Segment segment, System.Action onFinished)
     {
         float delay, duration;
         GetDelayAndDuration(segment, out delay, out duration);
-        
+
         DialogUI ui = DialogUISet.GetFirst<DialogUI>();
         Assert.IsNotNull(ui, "does not have a DialogUI");
-        
+
         yield return new WaitForSeconds(delay);
         PlayClip(segment.Clip);
-
-        if (showDialog) ui.SetText(segment.Text);
-        yield return new WaitForSeconds(duration);
-        if (showDialog) ui.ClearText();
         
+        ui.SetText(segment.Text);
+        yield return new WaitForSeconds(duration);
+        ui.ClearText();
+
         onFinished.TryInvoke();
     }
 
@@ -86,50 +94,49 @@ public class NarrativeSource : MonoBehaviour, IRuntime
         }
     }
 
-    private void GetDelayAndDuration(Segment segment, out float delay, out float duration)
+    private IEnumerator DialogSegementsRoutine(Segment[] segments, System.Action onFinished)
     {
-        delay = segment.DelayInSeconds;
-        duration = segment.DurationInSeconds;
-
-#if UNITY_EDITOR
-        if (DialogNodeBase.IS_DEBUG)
-        {
-            duration = Segment.DEBUG_DURATION;
-            delay = Segment.DEBUG_DELAY;
-        }
-#endif
-    }
-
-    private IEnumerator DialogSegementsRoutine(Segment[] segments, System.Action onFinished, bool showDialog)
-    {
-        float delay, duration;
-
         DialogUI ui = DialogUISet.GetFirst<DialogUI>();
         foreach (Segment segment in segments)
         {
+            float delay, duration;
             GetDelayAndDuration(segment, out delay, out duration);
 
             yield return new WaitForSeconds(delay);
             PlayClip(segment.Clip);
 
-            if (showDialog) ui.SetText(segment.Text);
-            
+            ui.SetText(segment.Text);
+
             #if UNITY_EDITOR
             if (LogSegments) mLogRoutine = StartCoroutine(PrintAudioStartTimeRoute());
             #endif
-            
+
             yield return new WaitForSeconds(duration);
 
             #if UNITY_EDITOR
             if (LogSegments) StopCoroutine(mLogRoutine);
-            #endif            
+            #endif
         }
 
-        if (showDialog) ui.ClearText();
+        ui.ClearText();
 
         if (onFinished != null)
             onFinished();
 
         OnStopped.Invoke();
+    }
+    
+    private void GetDelayAndDuration(Segment segment, out float delay, out float duration)
+    {
+        delay = segment.DelayInSeconds;
+        duration = segment.DurationInSeconds;
+
+        #if UNITY_EDITOR
+        if (DialogNodeBase.IS_DEBUG)
+        {
+            duration = Segment.DEBUG_DURATION;
+            delay = Segment.DEBUG_DELAY;
+        }
+        #endif
     }
 }

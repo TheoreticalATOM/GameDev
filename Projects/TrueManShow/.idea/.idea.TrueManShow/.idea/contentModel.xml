@@ -807,6 +807,7 @@
               <e p="SingleDialogNodePlayer.cs" t="Include" />
             </e>
             <e p="Events" t="Include">
+              <e p="EventButton.cs" t="Include" />
               <e p="EventDebugger.cs" t="Include" />
               <e p="EventList.cs" t="Include" />
               <e p="EventOnStart.cs" t="Include" />

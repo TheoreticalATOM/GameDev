@@ -25,6 +25,9 @@ public class DialogUI : SerializedMonoBehaviour, IRuntime
 
     public void SetText(string text)
     {
+	    if (text.Length == 0)
+		    return;
+	    
 	    SetBackdrop(true);
 		mQueuedText.Enqueue(text);
 		if(mQueuedText.Count > StackLimit)

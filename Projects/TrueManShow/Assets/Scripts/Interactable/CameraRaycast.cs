@@ -9,7 +9,7 @@ public class CameraRaycast : MonoBehaviour
 {
     public Camera maincamera;
     public float RaycastDist;
-    public Texture2D crosshairImage;
+    public GameObject CrossHair;
     public FirstPersonController FirstPerson;
     public Transform SnappingPoint;
 
@@ -32,6 +32,12 @@ public class CameraRaycast : MonoBehaviour
     // 	float yMin = (Screen.height / 2) - (crosshairImage.height / 2);
     // 	GUI.DrawTexture(new Rect(xMin, yMin, crosshairImage.width / 5, crosshairImage.height / 5), crosshairImage);
     // }
+
+
+    public void ShowCrosshair(bool value)
+    {
+        CrossHair.SetActive(value);
+    }
 
     // Update is called once per frame
     void Update()
