@@ -57,11 +57,14 @@ public class CameraRaycast : MonoBehaviour
                 //Checks what tag the object has
                 if (item)
                 {
-                    item.ItemOutline.enabled = true;
+                    UIInteract.Main.Display(item.InteractionResponse);
+                    //item.ItemOutline.enabled = true;
                     if (interactedObject != null)
                         if (interactedObject != item)
-                            interactedObject.ItemOutline.enabled = false;
-
+                        {
+                            UIInteract.Main.Hide();
+                            //interactedObject.ItemOutline.enabled = false;
+                        }
                     interactedObject = item;
 
                     //Check if we are pressing the "interact" input to interact 
@@ -74,19 +77,23 @@ public class CameraRaycast : MonoBehaviour
                         {
                             InteractableItem = item;
                             InteractableItem.StartInteract(hit.collider.gameObject, this.gameObject);
-                            item.ItemOutline.enabled = false;
+
+                            UIInteract.Main.Hide();
+                            //item.ItemOutline.enabled = false;
                             Interacting = true;
                         }
                     }
                 }
                 else if (interactedObject != null)
                 {
-                    interactedObject.ItemOutline.enabled = false;
+                    UIInteract.Main.Hide();
+                    //interactedObject.ItemOutline.enabled = false;
                 }
             }
             else if (interactedObject != null)
             {
-                interactedObject.ItemOutline.enabled = false;
+                UIInteract.Main.Hide();
+                //interactedObject.ItemOutline.enabled = false;
             }
         }
         else

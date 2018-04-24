@@ -17,6 +17,7 @@ public class ItemPhysicsInteractTrigger : ItemPhysicsInteract
 
     public override void StopInteract(GameObject Object, GameObject camera)
     {
+        UIInteract.Main.HideAll();
         mIsInteracting = false;
     }
 

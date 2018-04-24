@@ -26,6 +26,9 @@ public class ItemPhysicsInteractRaycast : ItemPhysicsInteract
         if (collided && !mAddedToInventory)
         {
             mAddedToInventory = TryAddToInventory(hit.collider);
+            if(mAddedToInventory)
+                UIInteract.Main.HideAll();
+
             return !mAddedToInventory;
         }
         return true;

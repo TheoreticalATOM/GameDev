@@ -3,21 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-[RequireComponent(typeof(cakeslice.Outline))]
 public abstract class Item : MonoBehaviour
 {
-
     public DialogNodeBase[] nodes;
+    public UIInteractionValue InteractionResponse;
     private bool mHasBeenUsedToday;
 
-    public cakeslice.Outline ItemOutline { get; private set; }
-    
-    protected virtual void Awake()
-    {
-        ItemOutline = GetComponent<cakeslice.Outline>();
-        ItemOutline.eraseRenderer = false; // clear the renderer on the start
-        ItemOutline.enabled = false;
-    }
+    protected virtual void Awake() { }
 
     public void StartInteract(GameObject Object, GameObject camera)
     {

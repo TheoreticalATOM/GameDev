@@ -1,15 +1,22 @@
 fileFormatVersion: 2
-guid: 70461d4ab78544a499761f2f7405c624
-timeCreated: 1524333492
-licenseType: Free
+guid: baed3bead5962664eb6530c704332792
+timeCreated: 1524609502
+licenseType: Pro
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
     100000: //RootNode
+    100002: Object534
+    100004: Sphere004
     400000: //RootNode
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: Cylinder037
+    400002: Object534
+    400004: Sphere004
+    2300000: Object534
+    2300002: Sphere004
+    3300000: Object534
+    3300002: Sphere004
+    4300000: Object534
+    4300002: Sphere004
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -37,7 +44,7 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 2
+    globalScale: 2.5
     meshCompression: 0
     addColliders: 0
     importBlendShapes: 1

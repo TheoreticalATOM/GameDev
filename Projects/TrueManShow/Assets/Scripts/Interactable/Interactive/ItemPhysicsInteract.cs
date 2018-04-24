@@ -6,6 +6,8 @@ using Sirenix.OdinInspector;
 
 public abstract class ItemPhysicsInteract : ItemPhysics
 {
+    public UIInteractionValue DropUI;
+
     public bool IsEligible;
     [Required()] public ResponseCollection Response;
 
@@ -19,6 +21,8 @@ public abstract class ItemPhysicsInteract : ItemPhysics
     // ____________________________________________ Item Methods:
     protected override void OnStartInteract(GameObject InteractedObject, GameObject player)
     {
+        UIInteract.Main.Display(DropUI, 1);
+
         base.OnStartInteract(InteractedObject, player);
         
         // if there are any registered verifications, then go through them all

@@ -45,6 +45,9 @@ public class ItemPhysics : Item
 
     public override bool InteractUpdate(GameObject interactedObject, GameObject player)
     {
+        InteractableRigidbody.velocity = Vector3.zero;
+        InteractableRigidbody.angularVelocity = Vector3.zero;
+
         //Bring the interacted object close to the camera
         if (Input.GetKeyDown("e"))
         {
@@ -69,10 +72,19 @@ public class ItemPhysics : Item
             bool isRightClicking = Input.GetButton("Fire2");
             player.GetComponent<CameraRaycast>().FirstPerson.DisableCamera = isRightClicking;
             player.GetComponent<CameraRaycast>().FirstPerson.DisableMovement = isRightClicking;
+
             if (isRightClicking)
             {
-                float h = Input.GetAxis("Mouse X") * speed;
-                float v = Input.GetAxis("Mouse Y") * speed;
+                float h = 0.0f, v = 0.0f;
+
+                if(RotationConstraints != RigidbodyConstraints.FreezeRotation)
+                {
+                    if(RotationConstraints != RigidbodyConstraints.FreezeRotationX)
+                        h = Input.GetAxis("Mouse X") * speed;
+
+                    if(RotationConstraints != RigidbodyConstraints.FreezeRotationY)
+                        v = Input.GetAxis("Mouse Y") * speed;
+                }
                 interactedObject.transform.Rotate(-v, -h, 0, Space.World);
             }
 
