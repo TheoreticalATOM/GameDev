@@ -169,6 +169,11 @@ public class TaskList : SerializedMonoBehaviour
         SpecificTask.OnTaskInit();
     }
 
+    private void Start()
+    {
+        PopulateTaskList();
+    }
+
     private void AddTaskToList(Task task)
     {
         /* gives the task a record of the TaskList (this), 

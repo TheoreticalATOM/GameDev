@@ -77,20 +77,14 @@ public class DayCycle : SerializedMonoBehaviour
     private void UpdateCycleData()
     {
         DayProperty prop = DailyProperties[mSegmentIndex];
-        
         RenderSettings.ambientLight = prop.Colour;
-        
-        //LightmapData[] lightmapDatas = LightmapSettings.lightmaps;
-        //for (int i = 0; i < prop.LightMaps.Length; i++)
-        //    lightmapDatas[i].lightmapColor = prop.LightMaps[i];
-        //LightmapSettings.lightmaps = lightmapDatas;
-        
+
         foreach (DayCycleReactor affected in prop.AffectedComponents)
             affected.OnReact();
 
         // Set the callback for only the first clock
         if (Clocks.Length > 0) Clocks[0].DurationMethodReachedCallback += MoveToNextDay;
-        
+
         // Start Clocks
         foreach (Clock clock in Clocks)
             clock.StartTime(prop.TimeHour, prop.TimeMinute, 60);

@@ -45,7 +45,6 @@ public class Player_Movement : MonoBehaviour {
         if (Input.GetButton("MiniGameStart") && Time.time > nextFire)
         {
             nextFire = Time.time + fireRate;
-	        Debug.Log(shotSpawn.position);
             Instantiate(shot, shotSpawn.position, shotSpawn.rotation);
         }
 	}
