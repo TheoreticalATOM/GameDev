@@ -39,6 +39,12 @@ public class CameraRaycast : MonoBehaviour
         CrossHair.SetActive(value);
     }
 
+    private void OnDisable()
+    {
+        if(UIInteract.Main)
+            UIInteract.Main.HideAll();
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -57,7 +63,7 @@ public class CameraRaycast : MonoBehaviour
                 //Checks what tag the object has
                 if (item)
                 {
-                    UIInteract.Main.Display(item.InteractionResponse);
+                   UIInteract.Main.Display(item.InteractionResponse);
                     //item.ItemOutline.enabled = true;
                     if (interactedObject != null)
                         if (interactedObject != item)

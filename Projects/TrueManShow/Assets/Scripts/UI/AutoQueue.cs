@@ -11,12 +11,14 @@ public class AutoQueue : MonoBehaviour
     public Text CustomMessage;
     public Progress TimeBar;
     public GameObject LiveIndicator;
-    public AudioSource CustomMessageSound;
+    public AudioClip CustomMessageClip;
+    public AudioClipPlayer CustomMessageSoundPlayer;
     
     public void SetCustomMessage(string msg)
     {
         CustomMessage.gameObject.SetActive(true);
-        CustomMessageSound.Play();
+        
+        CustomMessageSoundPlayer.PlayClip(CustomMessageClip);
         CustomMessage.text = msg;
         Title.gameObject.SetActive(false);
         Body.gameObject.SetActive(false);

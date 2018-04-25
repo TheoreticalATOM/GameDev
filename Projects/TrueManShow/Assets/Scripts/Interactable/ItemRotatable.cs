@@ -15,6 +15,7 @@ public class ItemRotatable : Item
     public float smoothIn = 5f;
     public float smoothOut = 10f;
     public GameObject SnapPoint;
+    public UIInteractionValue DropUI;
 
 
     public override bool InteractUpdate(GameObject interactedObject, GameObject player)
@@ -24,6 +25,7 @@ public class ItemRotatable : Item
             //Bring the interacted object close to the camera
             if (Input.GetKeyDown("e"))
             {
+                UIInteract.Main.Hide(1);
                 Interacting = false;
                 player.GetComponent<CameraRaycast>().FirstPerson.enabled = true;
                 posReachIn = false;
@@ -65,6 +67,8 @@ public class ItemRotatable : Item
 
     protected override void OnStartInteract(GameObject Object, GameObject player)
     {
+        UIInteract.Main.Display(DropUI, 1);
+        
         Interacting = true;
         OrigPos = Object.transform.position;
         OrigRot = Object.transform.rotation;

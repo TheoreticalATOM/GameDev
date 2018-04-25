@@ -5,7 +5,7 @@ using UnityEngine.Events;
 [System.Flags]
 public enum ECameraLocking
 {
-    NONE = 0, CAMERA = 2, ROOT_MOTION = 4, MOVEMENT = 8
+    NONE = 0, CAMERA = 2, ROOT_MOTION = 4, MOVEMENT = 8, OTHER = 16
 }
 
 public class CinemaController : MonoBehaviour
@@ -67,6 +67,12 @@ public class CinemaController : MonoBehaviour
 
         if((direction & ECameraLocking.ROOT_MOTION) == ECameraLocking.ROOT_MOTION)
             Cinema.CameraAnimator.applyRootMotion = !value;
+        
+        if((direction & ECameraLocking.OTHER) == ECameraLocking.OTHER)
+        {
+            if(value) Cinema.LockOther();
+            else Cinema.UnlockOther();
+        }
     }
 
     // public void TransitionToTarget(System.Action ArrivedCallback)

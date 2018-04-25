@@ -5,6 +5,7 @@ using UnityEngine.Events;
 [System.Serializable]
 public class DayProperty
 {
+    [TabGroup("General")] public Transform SpawnPoint;
     [TabGroup("General")] public Color Colour;
     [TabGroup("General")] public bool IsDayTime;
     [TabGroup("Time"), Range(0, 23)] public int TimeHour;
@@ -28,7 +29,6 @@ public class DayCycle : SerializedMonoBehaviour
     [TabGroup("Details")] public UnityEvent OnAllSegmentsCompleted;
     [TabGroup("Day Segments")] public DayProperty[] DailyProperties;
     [TabGroup("Clocks")] public Clock[] Clocks;
-
 
     private int mSegmentIndex = 0;
     
@@ -79,6 +79,11 @@ public class DayCycle : SerializedMonoBehaviour
         DayProperty prop = DailyProperties[mSegmentIndex];
         RenderSettings.ambientLight = prop.Colour;
 
+        // Set spawn points
+        Transform spawn = prop.SpawnPoint;
+        Player.transform.position = spawn.position;
+        Player.transform.rotation = spawn.rotation;
+        
         foreach (DayCycleReactor affected in prop.AffectedComponents)
             affected.OnReact();
 

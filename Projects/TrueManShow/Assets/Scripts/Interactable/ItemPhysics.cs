@@ -58,6 +58,9 @@ public class ItemPhysics : Item
             InteractableRigidbody.constraints = mOrigConstraints;
             player.GetComponent<CameraRaycast>().FirstPerson.DisableCamera = false;
             player.GetComponent<CameraRaycast>().FirstPerson.DisableMovement = false;
+
+            UIInteract.Main.HideAll();
+
             return false;
         }
         else
@@ -66,7 +69,6 @@ public class ItemPhysics : Item
             {
                 posReachIn = BringObject(interactedObject, SnapPoint.transform.position);
             }
-
 
             // Makes sure that the camera is locked when the Right click is pressed
             bool isRightClicking = Input.GetButton("Fire2");
@@ -110,7 +112,7 @@ public class ItemPhysics : Item
 
     public override void StopInteract(GameObject Object, GameObject camera)
     {
-
+        Debug.Log("hello");
     }
 
     //This function will bring the GameObject to the specified Vector3 location.

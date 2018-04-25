@@ -31,13 +31,16 @@ public class Player : Resetable
     public void LockCamera(bool value)
     {
         FirstPerson.DisableCamera = value;
-        CameraRaycaster.enabled = !value;
-        CameraRaycaster.ShowCrosshair(!value);        
-        
         if (!value)
             FirstPerson.ReInitializeMouseLook();
-
     }
+
+    public void LockInteraction(bool value)
+    {
+        CameraRaycaster.enabled = !value;
+        CameraRaycaster.ShowCrosshair(!value);    
+    }
+    
     public void LockMovement(bool value)
     {
         FirstPerson.DisableMovement = value;
@@ -47,6 +50,7 @@ public class Player : Resetable
     {
         LockCamera(value);
         LockMovement(value);
+        LockInteraction(value);
     }
 
     public override void ResetObject()

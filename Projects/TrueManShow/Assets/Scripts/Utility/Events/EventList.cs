@@ -10,9 +10,8 @@ public enum EEventListCompletion
 
 public class EventList : MonoBehaviour
 {
-    private delegate void DelIncrement(ref int index);
     private delegate bool DelEvaluation(ref int index, UnityEvent[] events);
-    private readonly static DelEvaluation[] EVENT_RESPONSE = new DelEvaluation[]
+    private static readonly DelEvaluation[] EVENT_RESPONSE = new DelEvaluation[]
     {
         EvaluationStop, EvaluationRepeat, EvaluationRepeatLast
     };
@@ -43,6 +42,11 @@ public class EventList : MonoBehaviour
     {
         RaiseEvent();
         Next();
+    }
+
+    public void SetToLast()
+    {
+        Index = Events.Length - 1;
     }
 
     // ______________________________________________________

@@ -669,7 +669,6 @@
               <e p="DialogNodeEvent.cs" t="Include" />
               <e p="DialogNodeSegmentGroup.cs" t="Include" />
               <e p="DialogNodeStatic.cs" t="Include" />
-              <e p="DialogStamper.cs" t="Include" />
             </e>
           </e>
           <e p="Interactable" t="Include">
@@ -790,6 +789,7 @@
             <e p="AutoQueue.cs" t="Include" />
             <e p="GameOver.cs" t="Include" />
             <e p="ImageFade.cs" t="Include" />
+            <e p="UIInteract.cs" t="Include" />
           </e>
           <e p="Utility" t="Include">
             <e p="AnimationCompletedTrigger.cs" t="Include" />

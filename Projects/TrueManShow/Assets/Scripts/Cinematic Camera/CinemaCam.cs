@@ -5,24 +5,24 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityStandardAssets.Characters.FirstPerson;
-
 using SDE;
 using UnityEngine.Assertions;
 
 public class CinemaCam : SerializedMonoBehaviour
 {
-    [Header("Transition")]
-    public float TransitionSpeed = 10.0f;
+    [Header("Transition")] public float TransitionSpeed = 10.0f;
     public Transform LerpingTransform;
     public Transform CameraTransform;
 
-    [Header("Animation and Restriction")]
-    public Animator CameraAnimator;
+    [Header("Animation and Restriction")] public Animator CameraAnimator;
 
     public UnityEvent OnCameraLocked;
     public UnityEvent OnCameraUnlocked;
     public UnityEvent OnMovementLocked;
     public UnityEvent OnMovementUnlocked;
+
+    public UnityEvent OnOtherLocked;
+    public UnityEvent OnOtherUnlocked;
 
     private Queue<UnityEvent> mKeyEvents;
     private Stack<System.Action> mAnimationCompleteEvents;
@@ -33,18 +33,32 @@ public class CinemaCam : SerializedMonoBehaviour
     {
         OnCameraLocked.Invoke();
     }
+
     public void UnlockCamera()
     {
         OnCameraUnlocked.Invoke();
     }
+
     public void LockMovement()
     {
         OnMovementLocked.Invoke();
     }
+
     public void UnlockMovement()
     {
         OnMovementUnlocked.Invoke();
     }
+
+    public void LockOther()
+    {
+        OnOtherLocked.Invoke();
+    }
+
+    public void UnlockOther()
+    {
+        OnOtherUnlocked.Invoke();
+    }
+
     // _______________________________________________________
     // @ Events
     public void RegisterAnimationCompletion()
@@ -57,12 +71,12 @@ public class CinemaCam : SerializedMonoBehaviour
     {
         /* if there is no key event registered, then ignore the request, 
         but drop a notifiying warning */
-        if(mKeyEvents.Count < 1)
+        if (mKeyEvents.Count < 1)
         {
             Debug.LogWarning("Requesting a KeyEvent Registration, but there are no key events triggers added");
             return;
         }
-        
+
         // do only one item at a time, allowing for calling multiple events iteratively
         mKeyEvents.Dequeue().Invoke();
     }
@@ -72,6 +86,7 @@ public class CinemaCam : SerializedMonoBehaviour
     {
         mKeyEvents.Enqueue(e);
     }
+
     public void AddKeyEventTriggers(UnityEvent[] e)
     {
         mKeyEvents.Enqueue(e);
