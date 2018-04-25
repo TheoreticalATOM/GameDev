@@ -11,7 +11,8 @@ public class NarrativeSource : MonoBehaviour, IRuntime
 {
     public RuntimeSet Source;
     public RuntimeSet DialogUISet;
-
+    public bool ClearTextOnCompletion = true;
+    
 #if UNITY_EDITOR
     public bool LogSegments;
     private Coroutine mLogRoutine;
@@ -47,6 +48,7 @@ public class NarrativeSource : MonoBehaviour, IRuntime
 
     public void PlayOne(Segment segment, System.Action onFinished)
     {
+        OnPlayed.Invoke();
         if (mDialogCoroutine != null)
             StopCoroutine(mDialogCoroutine);
 
@@ -56,6 +58,13 @@ public class NarrativeSource : MonoBehaviour, IRuntime
     public void PlayOneShotAudioClip(AudioClip clip)
     {
         mSource.PlayOneShot(clip);
+    }
+
+    public void ClearText()
+    {
+        DialogUI ui = DialogUISet.GetFirst<DialogUI>();
+        Assert.IsNotNull(ui, "does not have a DialogUI");
+        ui.ClearText();
     }
 
     private IEnumerator DialogSingleSegmentRoutine(Segment segment, System.Action onFinished)
@@ -71,9 +80,13 @@ public class NarrativeSource : MonoBehaviour, IRuntime
         
         ui.SetText(segment.Text);
         yield return new WaitForSeconds(duration);
-        ui.ClearText();
+        
+        if(ClearTextOnCompletion)
+            ui.ClearText();
 
         onFinished.TryInvoke();
+        
+        OnStopped.Invoke();
     }
 
     private IEnumerator PrintAudioStartTimeRoute()
@@ -119,7 +132,8 @@ public class NarrativeSource : MonoBehaviour, IRuntime
             #endif
         }
 
-        ui.ClearText();
+        if(ClearTextOnCompletion)
+            ui.ClearText();
 
         if (onFinished != null)
             onFinished();

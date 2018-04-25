@@ -13,7 +13,7 @@ public class ItemPhysics : Item
 
     public float smoothIn = 5f;
     public GameObject SnapPoint;
-
+    
     // Sets the displacement/rotational constraint of the physical object when its picked up
     public RigidbodyConstraints RotationConstraints;
 
@@ -100,6 +100,8 @@ public class ItemPhysics : Item
 
     protected override void OnStartInteract(GameObject InteractedObject, GameObject player)
     {
+        //UIInteract.Main.Display(DropUI, 1);
+        
         InteractedObject.GetComponent<Rigidbody>().useGravity = false;
         InteractableRigidbody.constraints = RotationConstraints;
 

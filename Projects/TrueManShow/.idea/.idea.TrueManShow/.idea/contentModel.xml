@@ -817,6 +817,7 @@
             </e>
             <e p="GameObjectSwapper.cs" t="Include" />
             <e p="InputListener.cs" t="Include" />
+            <e p="LidRemoval.cs" t="Include" />
             <e p="LookAtTarget.cs" t="Include" />
             <e p="OnCollisionSoundPlay.cs" t="Include" />
             <e p="Parenter.cs" t="Include" />
