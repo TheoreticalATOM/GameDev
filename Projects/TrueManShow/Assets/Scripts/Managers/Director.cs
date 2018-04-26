@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using SDE.Data;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -51,10 +52,22 @@ public class Director : SerializedMonoBehaviour
         if (CurrentSuspicion.IsMaxedOut)
         {
             MaxedOnSuspicion.Invoke();
-
-            string sceneName = (DayNightCycle.IsDayTime) ? SceneManager.GetActiveScene().name : NextLevelName;
-            GameOver.ShowGameOver(sceneName, () => CurrentSuspicion.Value = 0.0f);
+            GameOverDay((DayNightCycle.IsDayTime) ? SceneManager.GetActiveScene().name : NextLevelName);
         }
+    }
+
+    public void GameOverForward()
+    {
+        GameOverDay(NextLevelName);
+    }
+
+    public void GameOverDay(string levelName)
+    {
+        GameOver.ShowGameOver(NextLevelName, () => 
+        { 
+            CurrentSuspicion.Value = 0.0f;
+            CurrentAppearance.Value = 0.0f;
+        });
     }
 
     private void OnAppearanceChanged(float newValue)

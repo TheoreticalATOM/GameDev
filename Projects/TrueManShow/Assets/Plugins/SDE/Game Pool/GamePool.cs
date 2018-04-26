@@ -69,6 +69,11 @@ namespace SDE.GamePool
             PoolDataConfiguration.FillDictionary(ref mPool, CreatePool);
         }
 
+        private void OnDestroy()
+        {
+            GamePoolSet.Remove(this);
+        }
+
         // ------------------------------------------------
         // @ Pool Managment
         #region Pool Managment

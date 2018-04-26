@@ -33,6 +33,11 @@ public class AudioPool : SerializedMonoBehaviour, IRuntime
         Set.Add(this);
     }
 
+    private void OnDestroy()
+    {
+        Set.Remove(this);
+    }
+
     private void Start()
     {
         IsDefaultAllowed = true;

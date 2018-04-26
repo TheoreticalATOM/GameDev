@@ -30,6 +30,11 @@ public class NarrativeSource : MonoBehaviour, IRuntime
         Source.Add(this);
     }
 
+    private void OnDestroy()
+    {
+        Source.Remove(this);
+    }
+
     /// <summary>
     /// Will play the given audio clip at it's location, and invoke a OnPlayed event.
     /// Any current clip will be overwritten
@@ -65,6 +70,12 @@ public class NarrativeSource : MonoBehaviour, IRuntime
         DialogUI ui = DialogUISet.GetFirst<DialogUI>();
         Assert.IsNotNull(ui, "does not have a DialogUI");
         ui.ClearText();
+    }
+
+    public void StopDialog()
+    {
+        StopAllCoroutines();
+        mSource.Stop();
     }
 
     private IEnumerator DialogSingleSegmentRoutine(Segment segment, System.Action onFinished)

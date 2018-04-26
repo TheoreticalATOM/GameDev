@@ -23,7 +23,12 @@ public class DialogUI : SerializedMonoBehaviour, IRuntime
         DialogUISet.Add(this);
     }
 
-    public void SetText(string text)
+	private void OnDestroy()
+	{
+		DialogUISet.Remove(this);
+	}
+
+	public void SetText(string text)
     {
 	    if (text.Length == 0)
 		    return;
