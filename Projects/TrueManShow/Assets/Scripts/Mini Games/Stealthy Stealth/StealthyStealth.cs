@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 
 using SDE;
+using SDE.Data;
+using UnityEngine.Events;
 
 public class StealthyStealth : MiniGame
 {
@@ -11,15 +13,32 @@ public class StealthyStealth : MiniGame
     public GameObject MenuScreen;
     public GameObject GameOverScreen;
 
+    public RuntimeSet AudioPoolSet;
+    public AudioClip OnDeathClip;
+    
+    [Header("Reactions")] 
+    public int HostRemarkDeathCount;
+    public DialogNodeBase DialogMattDiesXAmount;
+    public DialogNodeBase[] DialogMattDies;
+    public DialogNodeBase DialogFinishedLevel;
+    
+    [Header("Special Events")]
+    public UnityEvent OnGameStartedOnce;
+    
+    public int DeathCount { get; private set; }
+    
     private int mCurrentLevel = 0;
     private System.Action mMenuAction;
-
+    private bool mHasBeenStartedOnce;
+    
+    public bool HasFinishedOnce { get; set; }
+    
     private bool mIsLocked = false;
 
     public void NextLevel()
     {
         Levels[mCurrentLevel].End();
-        if (++mCurrentLevel > Levels.Length - 1)
+        if (++mCurrentLevel >= Levels.Length)
         {
             GameOverScreen.SetActive(true);
             Camera.SetTarget(View);
@@ -30,7 +49,11 @@ public class StealthyStealth : MiniGame
             CompleteGame();
         }
         else
+        {
             Levels[mCurrentLevel].Play(Player);
+            DialogFinishedLevel.Play();
+        }
+        
 
         Player.LockPlayer(mIsLocked);
     }
@@ -38,6 +61,8 @@ public class StealthyStealth : MiniGame
     protected override void OnInit()
     {
         Player.OnDied += OnPlayerDied;
+        mHasBeenStartedOnce = false;
+        HasFinishedOnce = false;
     }
 
     protected override void OnPlay()
@@ -76,10 +101,16 @@ public class StealthyStealth : MiniGame
 
     protected override void OnUpdate()
     {
-        if (Input.GetButtonUp("MiniGameStart"))
+        if (!HasFinishedOnce && Input.GetButtonUp("MiniGameStart"))
         {
             enabled = false;
             mMenuAction();
+
+            if (!mHasBeenStartedOnce)
+            {
+                OnGameStartedOnce.Invoke();
+                mHasBeenStartedOnce = true;
+            }
         }
     }
 
@@ -90,7 +121,13 @@ public class StealthyStealth : MiniGame
 
     private void OnPlayerDied()
     {
-        Debug.Log("Died");
+        AudioPoolSet.GetFirst<AudioPool>().PlayClip(OnDeathClip);
+        
+        if(++DeathCount == HostRemarkDeathCount)
+            DialogMattDiesXAmount.Play();
+        else
+            DialogMattDies.RandomValue().Play();
+        
         Camera.SetTarget(View);
         OnPlay();
     }

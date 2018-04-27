@@ -10,6 +10,7 @@ public class GameConsole : MonoBehaviour
     public bool GameIsRunning { get { return mCurrentGame != null; } }
 
     private MiniGame mCurrentGame;
+    private MiniGame mPrevGame;
 
     public void SetCurrentGame(MiniGame game)
     {
@@ -18,9 +19,8 @@ public class GameConsole : MonoBehaviour
 
     public void StartGame()
     {
-        if (mCurrentGame)
+        if (mCurrentGame && mCurrentGame != mPrevGame)
         {
-
             AudioPool pool = Pool.GetFirst<AudioPool>();
             pool.IsDefaultAllowed = false;
             pool.StopDefault();
@@ -28,6 +28,8 @@ public class GameConsole : MonoBehaviour
                 pool.DeafenSong();
             mCurrentGame.Play();
         }
+
+        mPrevGame = mCurrentGame;
     }
 
     public void LockGame(bool state)
@@ -50,5 +52,6 @@ public class GameConsole : MonoBehaviour
                 pool.PlayDefaultAndStopAllClips();
         }
         mCurrentGame = null;
+        mPrevGame = null;
     }
 }

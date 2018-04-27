@@ -9,6 +9,7 @@ using SDE;
 [CreateAssetMenu(fileName = "Dialog Node Dynamic", menuName = "Dialog/Dynamic Node", order = 0)]
 public class DialogNodeDynamic : DialogNodeBase
 {
+	public int Priority;
     public List<SegmentContained> Segments;
 
     public override void Play(System.Action onFinishedCallback)
@@ -33,7 +34,7 @@ public class DialogNodeDynamic : DialogNodeBase
         Assert.IsNotNull(source, "The RuntimeSet, is not set by an NarrativeSource");
 
         // play a basic segment
-        source.PlayOne(segment, () => PlayASyncRecursive(index, onFinishedCallback));
+        source.PlayOne(segment, () => PlayASyncRecursive(index, onFinishedCallback), Priority);
     }
 
 

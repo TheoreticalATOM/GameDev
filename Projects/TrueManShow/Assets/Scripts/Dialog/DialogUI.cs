@@ -9,6 +9,7 @@ public class DialogUI : SerializedMonoBehaviour, IRuntime
 {
     public RuntimeSet DialogUISet;
     public Text TextArea;
+	public Text SecondaryTextArea;
 	public int StackLimit = 1;
 	
 	public GameObject BackDrop;
@@ -20,6 +21,7 @@ public class DialogUI : SerializedMonoBehaviour, IRuntime
     {
 		mQueuedText = new Queue<string>();
 		TextArea.text = string.Empty;
+	    SecondaryTextArea.text = string.Empty;
         DialogUISet.Add(this);
     }
 
@@ -28,6 +30,21 @@ public class DialogUI : SerializedMonoBehaviour, IRuntime
 		DialogUISet.Remove(this);
 	}
 
+	public void SetSecondaryText(string text)
+	{
+		if (text.Length == 0)
+			return;
+		
+		SecondaryTextArea.text = text;
+		SetBackdrop(true);
+	}
+	public void ClearSecondaryText()
+	{
+		SecondaryTextArea.text = string.Empty;
+		SetBackdrop(false);
+	}
+	
+	
 	public void SetText(string text)
     {
 	    if (text.Length == 0)
@@ -54,14 +71,18 @@ public class DialogUI : SerializedMonoBehaviour, IRuntime
 
 	private void SetBackdrop(bool value)
 	{
-		if(BackDrop)
-			BackDrop.SetActive(value);
+		if (BackDrop)
+		{
+			if(value) BackDrop.SetActive(true);
+			else if(TextArea.text == string.Empty && SecondaryTextArea.text == string.Empty)
+				BackDrop.SetActive(false);
+		}
 	}
 
 	IEnumerator ClearingBackDropRoutine()
 	{
 		yield return new WaitForSeconds(BackDropHideDelay);
-		SetBackdrop(false);
+		//SetBackdrop(false);
 	}
 	
 }

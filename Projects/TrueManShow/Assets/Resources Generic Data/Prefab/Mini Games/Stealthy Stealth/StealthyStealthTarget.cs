@@ -5,15 +5,28 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class StealthyStealthTarget : MonoBehaviour
 {
+    public DialogPlayer DialogJustBeforeKill;
 	public float LevelEndDelayInSeconds;
     public StealthyStealth Game;
-    public AudioSource GunShot;
+
+	public DialogPlayer DialogCompletingGame;
     private Animator mAnimator;
 
     private void Awake()
     {
         mAnimator = GetComponent<Animator>();
+	    DialogJustBeforeKill.OnCompleted.AddListener(() =>
+	    {
+		    DialogCompletingGame.Play();
+	    });
     }
+
+	public void KillTarget()
+	{
+		mAnimator.SetBool("kill", true);
+		StopAllCoroutines();
+		StartCoroutine(DelayRoutine());
+	}
 
     private void OnEnable()
     {
@@ -22,15 +35,15 @@ public class StealthyStealthTarget : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        StealthyStealthPlayer player = other.GetComponent<StealthyStealthPlayer>();
-        if (player)
-            player.LockPlayer(true);
-
-        mAnimator.SetBool("kill", true);
-        GunShot.Play();
-		StopAllCoroutines();
-        StartCoroutine(DelayRoutine());
+	    StealthyStealthPlayer player = other.GetComponent<StealthyStealthPlayer>();
+	    if (player) player.LockPlayer(true);
+	    DialogJustBeforeKill.Play();
     }
+
+	private void OnDestroy()
+	{
+		DialogJustBeforeKill.OnCompleted.RemoveAllListeners();
+	}
 
 	IEnumerator DelayRoutine()
 	{

@@ -48,6 +48,10 @@ public class EventList : MonoBehaviour
     {
         Index = Events.Length - 1;
     }
+    public void SetToFirst()
+    {
+        Index = 0;
+    }
 
     // ______________________________________________________
     // @ Evaluation

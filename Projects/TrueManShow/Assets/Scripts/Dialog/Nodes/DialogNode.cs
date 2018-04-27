@@ -9,6 +9,7 @@ using UnityEngine.Assertions;
 public class DialogNode : SerializedScriptableObject
 {
     public RuntimeSet NarrativeSourceSet;
+    public int Priority;
     public Segment[] Segments;
     [Space(50.0f)]
     [DictionaryDrawerSettings(DisplayMode = DictionaryDisplayOptions.Foldout, IsReadOnly = false, KeyLabel = "key", ValueLabel = "value")]
@@ -33,7 +34,7 @@ public class DialogNode : SerializedScriptableObject
         NarrativeSource source = NarrativeSourceSet.GetFirst<NarrativeSource>();
         Assert.IsNotNull(source, "The RuntimeSet, is not set by an NarrativeSource");
 
-        source.Play(Segments, OnFinishedCallback);
+        source.Play(Segments, OnFinishedCallback, Priority);
     }
     public void Play()
     {

@@ -6,7 +6,9 @@ using UnityEngine.Assertions;
 public abstract class Item : MonoBehaviour
 {
     public DialogNodeBase[] nodes;
+    public bool OneDialogUse = false;
     public UIInteractionValue InteractionResponse;
+    
     private bool mHasBeenUsedToday;
 
     protected virtual void Awake() { }
@@ -19,7 +21,8 @@ public abstract class Item : MonoBehaviour
             Assert.IsNotNull(nodes[random], "a node in " + name + " is null");
 
             nodes[random].Play(null);
-            mHasBeenUsedToday = true;
+
+            mHasBeenUsedToday = OneDialogUse;
         }
         OnStartInteract(Object, camera);
     }

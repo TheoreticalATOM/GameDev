@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using SDE.Data;
 using UnityEngine;
 
 public class StealthyStealthCamera : MonoBehaviour
@@ -8,10 +9,21 @@ public class StealthyStealthCamera : MonoBehaviour
     public float Speed;
     public LayerMask CollisionMask;
     public float DamageAmount;
+    
+    [Header("Audio")]
+    public RuntimeSet AudioPoolSet;
+    public AudioClip DetectionClip;
 
     private StealthyStealthPlayer mPlayer;
+    private AudioPool mPool;
+    private AudioSource mLoopedSource;
+    
+    private void Start()
+    {
+        mPool = AudioPoolSet.GetFirst<AudioPool>();
+    }
 
-    // Update is called once per frame
+
     void FixedUpdate()
     {
         transform.rotation = Quaternion.Euler(0f, 0f, MaxRotation * Mathf.Sin(Time.time * Speed));
@@ -29,8 +41,21 @@ public class StealthyStealthCamera : MonoBehaviour
         Vector3 towards = otherPos - thisPos;
 		
 		RaycastHit2D visibleCollider = Physics2D.Raycast(thisPos, towards.normalized, towards.sqrMagnitude, CollisionMask);
-		if(visibleCollider.collider && visibleCollider.collider.gameObject == mPlayer.gameObject)
-        	mPlayer.Damage(DamageAmount * Time.deltaTime);
+        if (visibleCollider.collider && visibleCollider.collider.gameObject == mPlayer.gameObject)
+        {
+            // if there is no loop source, then get one and loop the clip
+            if (!mLoopedSource) mLoopedSource = mPool.GetLoop(DetectionClip);
+            // if there is already one, but it is stopped, then play it
+            else if(!mLoopedSource.isPlaying) 
+                mLoopedSource.Play();
+            
+            mPlayer.Damage(DamageAmount * Time.deltaTime);
+        }
+        else if (mLoopedSource)
+        {
+            mLoopedSource.Stop();
+            mLoopedSource = null;
+        }
     }
 
     private void OnTriggerExit2D(Collider2D other)

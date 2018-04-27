@@ -19,6 +19,11 @@ public class InputListener : MonoBehaviour
         enabled = true;
     }
 
+    public void TurnOffListener()
+    {
+        enabled = false;
+    }
+
     private void Update()
     {
         if (Input.GetButtonDown(InputName))

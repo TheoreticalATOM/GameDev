@@ -16,6 +16,14 @@ namespace SDE
             return comp;
         }
 
+        public static T AddComponent<T>(this GameObject go, System.Action<T> SetProperties) where T : Component
+        {
+            T comp = go.AddComponent<T>();
+            SetProperties(comp);
+            return comp;
+        }
+        
+
         public static T RandomValue<T>(this T[] array)
         {
             return array[Random.Range(0, array.Length)];

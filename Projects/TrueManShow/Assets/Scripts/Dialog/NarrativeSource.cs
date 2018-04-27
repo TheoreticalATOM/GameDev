@@ -13,6 +13,8 @@ public class NarrativeSource : MonoBehaviour, IRuntime
     public RuntimeSet DialogUISet;
     public bool ClearTextOnCompletion = true;
     
+    public int CurrentPriority { get; private set; }
+    
 #if UNITY_EDITOR
     public bool LogSegments;
     private Coroutine mLogRoutine;
@@ -23,7 +25,8 @@ public class NarrativeSource : MonoBehaviour, IRuntime
 
     private AudioSource mSource;
     private Coroutine mDialogCoroutine;
-
+    private Coroutine mSecondaryDialogCoroutine;
+    
     private void Awake()
     {
         mSource = GetComponent<AudioSource>();
@@ -39,24 +42,38 @@ public class NarrativeSource : MonoBehaviour, IRuntime
     /// Will play the given audio clip at it's location, and invoke a OnPlayed event.
     /// Any current clip will be overwritten
     /// </summary>
-    public void Play(Segment[] segments, System.Action onFinished)
+    public void Play(Segment[] segments, System.Action onFinished, int priority)
     {
+        OnPlayed.Invoke();
+        if (priority < CurrentPriority)
+        {
+            if(mSecondaryDialogCoroutine != null)
+                StopCoroutine(mSecondaryDialogCoroutine);
+            
+            mSecondaryDialogCoroutine = StartCoroutine(DialogSegementsSecondaryTextOnlyRoutine(segments, onFinished));
+            return;
+        }
+        CurrentPriority = priority;
+        
         if (mDialogCoroutine != null)
             StopCoroutine(mDialogCoroutine);
 
-        OnPlayed.Invoke();
-        
-        DialogUI ui = DialogUISet.GetFirst<DialogUI>();
-        Assert.IsNotNull(ui, "does not have a DialogUI");
         mDialogCoroutine = StartCoroutine(DialogSegementsRoutine(segments, onFinished));
     }
 
-    public void PlayOne(Segment segment, System.Action onFinished)
+    public void PlayOne(Segment segment, Action onFinished, int priority)
     {
         OnPlayed.Invoke();
-        if (mDialogCoroutine != null)
-            StopCoroutine(mDialogCoroutine);
-
+        if (priority < CurrentPriority)
+        {
+            if(mSecondaryDialogCoroutine != null)
+                StopCoroutine(mSecondaryDialogCoroutine);
+            mSecondaryDialogCoroutine = StartCoroutine(DialogSegmentSecondaryTextOnlyRoutine(segment, onFinished));
+            return;
+        }
+        CurrentPriority = priority;
+       
+        if (mDialogCoroutine != null) StopCoroutine(mDialogCoroutine);
         mDialogCoroutine = StartCoroutine(DialogSingleSegmentRoutine(segment, onFinished));
     }
 
@@ -96,7 +113,8 @@ public class NarrativeSource : MonoBehaviour, IRuntime
             ui.ClearText();
 
         onFinished.TryInvoke();
-        
+
+        CurrentPriority = 0;
         OnStopped.Invoke();
     }
 
@@ -149,6 +167,7 @@ public class NarrativeSource : MonoBehaviour, IRuntime
         if (onFinished != null)
             onFinished();
 
+        CurrentPriority = 0;
         OnStopped.Invoke();
     }
     
@@ -164,5 +183,48 @@ public class NarrativeSource : MonoBehaviour, IRuntime
             delay = Segment.DEBUG_DELAY;
         }
         #endif
+    }
+
+    
+    /* Secondary Text */
+    private IEnumerator DialogSegmentSecondaryTextOnlyRoutine(Segment segment, Action onFinished)
+    {
+        float delay, duration;
+        GetDelayAndDuration(segment, out delay, out duration);
+
+        DialogUI ui = DialogUISet.GetFirst<DialogUI>();
+        Assert.IsNotNull(ui, "does not have a DialogUI");
+
+        yield return new WaitForSeconds(delay);
+        ui.SetSecondaryText(segment.Text);
+        yield return new WaitForSeconds(duration);
+        
+        if(ClearTextOnCompletion)
+            ui.ClearSecondaryText();
+
+        onFinished.TryInvoke();
+        OnStopped.Invoke();
+    }
+    
+    private IEnumerator DialogSegementsSecondaryTextOnlyRoutine(Segment[] segments, Action onFinished)
+    {
+        DialogUI ui = DialogUISet.GetFirst<DialogUI>();
+        foreach (Segment segment in segments)
+        {
+            float delay, duration;
+            GetDelayAndDuration(segment, out delay, out duration);
+            
+            yield return new WaitForSeconds(delay);
+            ui.SetSecondaryText(segment.Text);
+            yield return new WaitForSeconds(duration);
+        }
+
+        if(ClearTextOnCompletion)
+            ui.ClearSecondaryText();
+
+        if (onFinished != null)
+            onFinished();
+        
+        OnStopped.Invoke();
     }
 }

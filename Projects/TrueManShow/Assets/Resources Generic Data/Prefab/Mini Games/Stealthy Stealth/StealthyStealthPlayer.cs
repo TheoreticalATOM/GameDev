@@ -4,6 +4,9 @@ using UnityEngine;
 
 using SDE.UI;
 using SDE;
+using SDE.Data;
+using UnityEngine.Events;
+using UnityStandardAssets.Characters.FirstPerson;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(SpriteRenderer), typeof(Animator))]
 public class StealthyStealthPlayer : MonoBehaviour
@@ -17,14 +20,20 @@ public class StealthyStealthPlayer : MonoBehaviour
     public float Speed;
     public float MaxHealth = 100.0f;
     public Progress SuspicionMeter;
-
+	public RuntimeSet AudioPoolSet;
+	public AudioClip WalkingClip;
+	
 	// ________________________________________________
 	// @ Data
     private Rigidbody2D mBody;
     private SpriteRenderer mSprite;
     private Animator mAnimator;
 	private Vector3 mSpawnPoint;
-
+	
+	private AudioPool mPool;
+	private AudioSource mLoopedSource;
+	
+	
 	// ________________________________________________
 	// @ Getters
     public float CurrentHealth { get; private set; }
@@ -74,7 +83,12 @@ public class StealthyStealthPlayer : MonoBehaviour
         mAnimator = GetComponent<Animator>();
     }
 
-    private void OnEnable()
+	private void Start()
+	{
+		mPool = AudioPoolSet.GetFirst<AudioPool>();
+	}
+
+	private void OnEnable()
     {
         ResetHealth();
     }

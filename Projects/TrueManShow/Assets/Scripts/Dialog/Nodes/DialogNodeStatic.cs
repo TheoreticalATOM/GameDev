@@ -6,6 +6,7 @@ using SDE.Data;
 [CreateAssetMenu(fileName = "Dialog Node Static", menuName = "Dialog/Static Node", order = 0)]
 public class DialogNodeStatic : DialogNodeBase
 {
+    public int Priority;
 	public RuntimeSet NarrativeSourceSet;
     public Segment[] Segments;
 
@@ -15,6 +16,6 @@ public class DialogNodeStatic : DialogNodeBase
         NarrativeSource source = NarrativeSourceSet.GetFirst<NarrativeSource>();
         Assert.IsNotNull(source, "The RuntimeSet, is not set by an NarrativeSource");
 
-        source.Play(Segments, onFinishedCallback);
+        source.Play(Segments, onFinishedCallback, Priority);
     }
 }
