@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using NUnit.Framework;
 using SDE;
 using SDE.Data;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 [System.Serializable]
 public class SegmentGroup

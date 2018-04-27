@@ -33,9 +33,14 @@ public class UIInteract : SerializedMonoBehaviour
     public static UIInteract Main { get; private set; }
 
     public Sprite[] KeyIcons;
-
+    
     public InteractionSet[] Set;
 
+    [Header("Cursor Hovering")] 
+    public Image CursorDotImage;
+    public Image CursorImage;
+    public Sprite HoveringOverSprite;
+    
     private void Awake()
     {
         if (Main) Destroy(Main);
@@ -46,8 +51,13 @@ public class UIInteract : SerializedMonoBehaviour
 
     public void Display(UIInteractionValue value, int setIndex = 0)
     {
+        CursorDotImage.gameObject.SetActive(false);
+        
+        CursorImage.sprite = HoveringOverSprite;
+        CursorImage.gameObject.SetActive(true);
+        
         Assert.IsTrue(setIndex < Set.Length);
-
+        
         InteractionSet set = Set[setIndex];
         set.group.SetActive(true);
         set.InteractImage.sprite = KeyIcons[(int)value.Key];
@@ -56,6 +66,9 @@ public class UIInteract : SerializedMonoBehaviour
 
     public void Hide(int setIndex = 0)
     {
+        CursorImage.gameObject.SetActive(false);
+        CursorDotImage.gameObject.SetActive(true);
+        
         Assert.IsTrue(setIndex < Set.Length);
         Set[setIndex].group.SetActive(false);
     }
