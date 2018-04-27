@@ -6,11 +6,10 @@ using UnityEngine.Events;
 public class DayProperty
 {
     [TabGroup("General")] public Transform SpawnPoint;
-    [TabGroup("General")] public Color Colour;
     [TabGroup("General")] public bool IsDayTime;
     [TabGroup("Time"), Range(0, 23)] public int TimeHour;
     [TabGroup("Time"), Range(0, 59)] public int TimeMinute;
-    //[TabGroup("General")] public Texture2D[] LightMaps;
+    [TabGroup("General")] public BakedLightData LightData;
     [TabGroup("Component Affection")] public DayCycleReactor[] AffectedComponents;
     [TabGroup("Events")] public UnityEvent OnSelected;
     [TabGroup("Events")] public UnityEvent OnDeselected;
@@ -64,6 +63,9 @@ public class DayCycle : SerializedMonoBehaviour
     
     private void Start()
     {
+        foreach (DayProperty dailyProperty in DailyProperties)
+            dailyProperty.LightData.ConstructLightMap();
+        
         ScreenFade.gameObject.SetActive(true);
         ScreenFade.FadeIn(() => DailyProperties[mSegmentIndex].OnSelected.Invoke());
         UpdateCycleData();
@@ -77,7 +79,10 @@ public class DayCycle : SerializedMonoBehaviour
     private void UpdateCycleData()
     {
         DayProperty prop = DailyProperties[mSegmentIndex];
-        RenderSettings.ambientLight = prop.Colour;
+         
+        // Set Lightmap
+        LightmapSettings.lightmaps = prop.LightData.Data;
+        
 
         // Set spawn points
         Transform spawn = prop.SpawnPoint;

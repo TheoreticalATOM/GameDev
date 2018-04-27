@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine.Assertions;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using SDE;
 using UnityEngine.Events;
-using SDE.Data;
 
 public class TaskList : SerializedMonoBehaviour
 {
@@ -53,14 +51,14 @@ public class TaskList : SerializedMonoBehaviour
     private Queue<Task> mTaskList;
     private System.Random mRandomizer;
 
-#if UNITY_EDITOR
-    public class EditorTaskName
-    {
-        public bool Complete;
-        public string Name;
-    }
-    [HideInInspector] public Dictionary<Task, EditorTaskName> TaskListNames = new Dictionary<Task, EditorTaskName>();
-#endif
+//#if UNITY_EDITOR
+//    public class EditorTaskName
+//    {
+//        public bool Complete;
+//        public string Name;
+//    }
+//    [HideInInspector] public Dictionary<Task, EditorTaskName> TaskListNames = new Dictionary<Task, EditorTaskName>();
+//#endif
 
     // ________________________________________________________ Getters
     #region Getters
@@ -89,9 +87,9 @@ public class TaskList : SerializedMonoBehaviour
         // clear the current list of tasks
         mTaskList.Clear();
 
-#if UNITY_EDITOR
-        TaskListNames.Clear();
-#endif
+//#if UNITY_EDITOR
+//        TaskListNames.Clear();
+//#endif
 
         // if there are no random tasks, then just simply add the specific task
         if (NumberOfRandomTasks < 1)
@@ -183,13 +181,13 @@ public class TaskList : SerializedMonoBehaviour
         // add it to the queue of required tasks to be done
         mTaskList.Enqueue(task);
 
-#if UNITY_EDITOR
-        TaskListNames.Add(task, new EditorTaskName()
-        {
-            Complete = false,
-            Name = task.name
-        });
-#endif
+//#if UNITY_EDITOR
+//        TaskListNames.Add(task, new EditorTaskName()
+//        {
+//            Complete = false,
+//            Name = task.name
+//        });
+//#endif
     }
 
     private void UpdateTheTaskList()
@@ -197,10 +195,10 @@ public class TaskList : SerializedMonoBehaviour
         /* will reomve the currenlty active task and check if there are any left.
 		If none, then fire off an event */
         Task task = mTaskList.Dequeue();
-#if UNITY_EDITOR
-        if (TaskListNames.ContainsKey(task))
-            TaskListNames[task].Complete = true;
-#endif
+//#if UNITY_EDITOR
+//        if (TaskListNames.ContainsKey(task))
+//            TaskListNames[task].Complete = true;
+//#endif
 
         if (TasksLeft < 1)
         {

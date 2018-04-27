@@ -624,7 +624,6 @@
               <e p="ProjectorMultiply.shader" t="Include" />
             </e>
             <e p="Silhouette.shader" t="Include" />
-            <e p="TVSnow.shader" t="Include" />
           </e>
         </e>
         <e p="Scripts" t="Include">
@@ -649,6 +648,7 @@
             <e p="DigitalClock.cs" t="Include" />
           </e>
           <e p="Data" t="Include">
+            <e p="BakedLightData.cs" t="Include" />
             <e p="DirectorAwarenessValue.cs" t="Include" />
             <e p="ScriptableAnimation" t="Include">
               <e p="ScriptableAnimation.cs" t="Include" />

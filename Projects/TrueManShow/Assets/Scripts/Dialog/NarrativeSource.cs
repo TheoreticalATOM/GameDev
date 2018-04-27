@@ -113,11 +113,14 @@ public class NarrativeSource : MonoBehaviour, IRuntime
             ui.ClearText();
 
         onFinished.TryInvoke();
-
-        CurrentPriority = 0;
         OnStopped.Invoke();
     }
 
+    public void ResetPriority()
+    {
+        CurrentPriority = 0;
+    }
+    
     private IEnumerator PrintAudioStartTimeRoute()
     {
         float startTime = Time.time;
@@ -167,7 +170,7 @@ public class NarrativeSource : MonoBehaviour, IRuntime
         if (onFinished != null)
             onFinished();
 
-        CurrentPriority = 0;
+        ResetPriority();
         OnStopped.Invoke();
     }
     

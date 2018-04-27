@@ -21,6 +21,8 @@ public class DialogNodeDynamic : DialogNodeBase
     {
         if (index > Segments.Count - 1)
         {
+	        foreach (SegmentContained contained in Segments)
+		        contained.NarrativeSourceSet.GetFirst<NarrativeSource>().ResetPriority();
             onFinishedCallback.TryInvoke();
             return;
         }
