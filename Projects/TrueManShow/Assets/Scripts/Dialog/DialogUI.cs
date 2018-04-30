@@ -73,16 +73,17 @@ public class DialogUI : SerializedMonoBehaviour, IRuntime
 	{
 		if (BackDrop)
 		{
-			if(value) BackDrop.SetActive(true);
-			else if(TextArea.text == string.Empty && SecondaryTextArea.text == string.Empty)
-				BackDrop.SetActive(false);
+			BackDrop.SetActive(value);
+//			if(value) BackDrop.SetActive(true);
+//			else if(TextArea.text == string.Empty && SecondaryTextArea.text == string.Empty)
+//				BackDrop.SetActive(false);
 		}
 	}
 
 	IEnumerator ClearingBackDropRoutine()
 	{
 		yield return new WaitForSeconds(BackDropHideDelay);
-		//SetBackdrop(false);
+		SetBackdrop(false);
 	}
 	
 }

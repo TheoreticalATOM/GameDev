@@ -8,6 +8,32 @@
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
+        <e p="Computer Stuff" t="Include">
+          <e p="Resources Visual" t="Include">
+            <e p="Sprites" t="Include">
+              <e p="PC" t="Include">
+                <e p="MineGame" t="Include">
+                  <e p="Scripts" t="Include">
+                    <e p="Element.cs" t="Include" />
+                    <e p="GenerateMineGame.cs" t="Include" />
+                    <e p="Grid.cs" t="Include" />
+                  </e>
+                </e>
+              </e>
+            </e>
+          </e>
+          <e p="Scripts" t="Include">
+            <e p="Computer" t="Include">
+              <e p="ActivateLogWindow.cs" t="Include" />
+              <e p="ButtonInteraction.cs" t="Include" />
+              <e p="CloseMail.cs" t="Include" />
+              <e p="LogIn.cs" t="Include" />
+              <e p="Mail.cs" t="Include" />
+              <e p="MailButton.cs" t="Include" />
+              <e p="ResetMailButtons.cs" t="Include" />
+            </e>
+          </e>
+        </e>
         <e p="Plugins" t="Include">
           <e p="Editor" t="Include">
             <e p="JetBrains" t="Include">
@@ -732,6 +758,9 @@
             <e p="GameConsole.cs" t="Include" />
             <e p="MiniGame.cs" t="Include" />
             <e p="MiniGameCamera.cs" t="Include" />
+            <e p="PC" t="Include">
+              <e p="PCWrapper.cs" t="Include" />
+            </e>
             <e p="Space Invaders" t="Include">
               <e p="BaseDefeat.cs" t="Include" />
               <e p="BaseHealth.cs" t="Include" />
