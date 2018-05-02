@@ -13,6 +13,9 @@ public class MenuControl : MonoBehaviour {
 	public GameObject CreditsPanel2;
 	public GameObject otherPanel;
 
+    public GameObject LoadyBoi;
+    public GameObject PlayBut;
+
 	void Start () 
 	{
 		controllPanel.SetActive(false);
@@ -20,7 +23,8 @@ public class MenuControl : MonoBehaviour {
 		creditsPanel.SetActive(false);
 		otherPanel.SetActive(false);
 		CreditsPanel2.SetActive(false);
-	}
+        LoadyBoi.SetActive(false);
+    }
 
 	public void CloseAllPanels()
 	{
@@ -90,8 +94,18 @@ public class MenuControl : MonoBehaviour {
 
 	public void playGame()
 	{
-		SceneManager.LoadScene(1);
-	}
+        LoadyBoi.SetActive(true);
+        PlayBut.SetActive(false);
+
+        StopAllCoroutines();
+        StartCoroutine(LoadLevelDelayRoutine());
+    }
+
+    IEnumerator LoadLevelDelayRoutine()
+    {
+        yield return new WaitForSeconds(2.0f);
+        SceneManager.LoadSceneAsync(1);
+    }
 
 
 }
