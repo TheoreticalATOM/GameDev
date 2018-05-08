@@ -16,9 +16,25 @@ public class MenuControl : MonoBehaviour {
     public GameObject LoadyBoi;
     public GameObject PlayBut;
 
-	void Start () 
+    private int index;
+
+    public Slider[] volumeSliders;
+    public Toggle[] resolutionToggles;
+    public Toggle fullscreenToggle;
+    public int[] screenWidths;
+    int activeScreenResindex;
+
+    void Start () 
 	{
-		controllPanel.SetActive(false);
+        activeScreenResindex = PlayerPrefs.GetInt("screen res index");
+        bool isFullscreen = (PlayerPrefs.GetInt("fullscreen") == 1) ? true : false;
+
+        for (int i = 0; i < resolutionToggles.Length; i++)
+        {
+            resolutionToggles[i].isOn = i == activeScreenResindex;
+        }
+
+        controllPanel.SetActive(false);
 		optionsPanel.SetActive(false);
 		creditsPanel.SetActive(false);
 		otherPanel.SetActive(false);
@@ -107,5 +123,43 @@ public class MenuControl : MonoBehaviour {
         SceneManager.LoadSceneAsync(1);
     }
 
+    public void SetScreenResolution(int i)
+    {
+        if (resolutionToggles[i].isOn)
+        {
+            activeScreenResindex = i;
+            float aspectRatio = 16 / 9f;
+            Screen.SetResolution(screenWidths[i], (int)(screenWidths[i] / aspectRatio), false);
+            PlayerPrefs.SetInt("screen res index", activeScreenResindex);
+            PlayerPrefs.Save();
+        }
+    }
+
+    public void SetFullScreen(bool isFullScreen)
+    {
+        for (int i = 0; i < resolutionToggles.Length; i++)
+        {
+            resolutionToggles[i].interactable = !isFullScreen;
+        }
+        if (isFullScreen)
+        {
+            Resolution[] allResolutions = Screen.resolutions;
+            Resolution maxResolution = allResolutions[allResolutions.Length - 1];
+            Screen.SetResolution(maxResolution.width, maxResolution.height, true);
+        }
+        else
+        {
+            SetScreenResolution(activeScreenResindex);
+        }
+
+        PlayerPrefs.SetInt("fullscreen", ((isFullScreen) ? 1 : 0));
+        PlayerPrefs.Save();
+
+    }
+
+    public void AdjustVolume(float newVolume)
+    {
+        AudioListener.volume = newVolume;
+    }
 
 }

@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: e7a2e27b1d19c054b84d298ee42a74d3
+timeCreated: 1525777104
+licenseType: Pro
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Low Gun Screen
+  fontNames:
+  - Low Gun Screen
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
