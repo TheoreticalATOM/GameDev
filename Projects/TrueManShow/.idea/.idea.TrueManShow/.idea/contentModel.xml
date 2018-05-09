@@ -32,6 +32,8 @@
               <e p="MailButton.cs" t="Include" />
               <e p="ResetMailButtons.cs" t="Include" />
             </e>
+            <e p="PassGeneration.cs" t="Include" />
+            <e p="TextAppear.cs" t="Include" />
           </e>
         </e>
         <e p="MenuStuff" t="Include">
