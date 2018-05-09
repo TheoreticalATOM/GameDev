@@ -4,9 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class ButtonInteraction : MonoBehaviour {
+    
     public Sprite imageOnPressed;
     public GameObject powerButton;
     private Sprite originalImage;
+    
     public void ChangeSprite()
     {
         if (GetComponent<Image>().sprite == originalImage)
@@ -16,7 +18,6 @@ public class ButtonInteraction : MonoBehaviour {
         else
         {
             GetComponent<Image>().sprite = originalImage;
-            print(GetComponent<Image>().sprite);
         }
     }
 
@@ -40,10 +41,5 @@ public class ButtonInteraction : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         originalImage = GetComponent<Image>().sprite;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
 	}
 }

@@ -1,36 +1,33 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 
 public class LogIn : MonoBehaviour {
 
     public string desiredPass;
-    public GameObject password;
+    public InputField password;
     public GameObject desiredWindow;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
+    public UnityEvent OnPasswordCorrect;
+    
     public void CheckPass()
     {
-        if (password.GetComponent<Text>().text == desiredPass)
+        if (password.text == desiredPass)
         {
             this.transform.parent.gameObject.SetActive(false);
             desiredWindow.SetActive(true);
-
+            OnPasswordCorrect.Invoke();
         }
         else
         {
             this.transform.GetChild(0).gameObject.SetActive(true);
         }
+    }
+
+    private void OnEnable()
+    {
+        password.text = string.Empty;
+        this.transform.GetChild(0).gameObject.SetActive(false);
     }
 }

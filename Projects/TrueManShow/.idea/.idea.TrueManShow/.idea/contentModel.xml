@@ -34,6 +34,10 @@
             </e>
           </e>
         </e>
+        <e p="MenuStuff" t="Include">
+          <e p="MenuControl.cs" t="Include" />
+          <e p="PauseMenu.cs" t="Include" />
+        </e>
         <e p="Plugins" t="Include">
           <e p="Editor" t="Include">
             <e p="JetBrains" t="Include">
@@ -640,6 +644,11 @@
                 <e p="StealthyStealthTarget.cs" t="Include" />
               </e>
             </e>
+            <e p="VinylStuff" t="Include">
+              <e p="IRVinylInsert.cs" t="Include" />
+              <e p="Vinyl.cs" t="Include" />
+              <e p="VinylPlayer.cs" t="Include" />
+            </e>
           </e>
         </e>
         <e p="Resources Visual" t="Include">
@@ -653,6 +662,10 @@
           </e>
         </e>
         <e p="Scripts" t="Include">
+          <e p="BasketScore" t="Include">
+            <e p="BasketScore.cs" t="Include" />
+            <e p="CheckBasketScore.cs" t="Include" />
+          </e>
           <e p="Cinematic Camera" t="Include">
             <e p="CinemaCam.cs" t="Include" />
             <e p="CinemaController.cs" t="Include" />
