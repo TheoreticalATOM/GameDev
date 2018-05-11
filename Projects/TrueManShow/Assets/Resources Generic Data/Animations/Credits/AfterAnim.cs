@@ -13,6 +13,8 @@ public class AfterAnim : MonoBehaviour {
         this.GetComponent<AudioSource>().clip = finalTwist;
         this.GetComponent<AudioSource>().enabled = true;
         this.GetComponent<AudioSource>().Play();
+        
+        StartCoroutine(OnDelayed());
     }
 
     public void Playsong()
@@ -20,8 +22,6 @@ public class AfterAnim : MonoBehaviour {
         print("play");
         this.GetComponent<AudioSource>().enabled = true;
         this.GetComponent<AudioSource>().Play();
-
-        StartCoroutine(OnDelayed());
     }
 
     public void Stopsong()
