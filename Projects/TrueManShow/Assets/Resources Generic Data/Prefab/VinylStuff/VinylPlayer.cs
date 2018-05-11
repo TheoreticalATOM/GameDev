@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VinylPlayer : MonoBehaviour {
-
+public class VinylPlayer : MonoBehaviour
+{
+    public Animator PinAnimator;
+    public Rotator HandleRotator;
     private Vinyl mcurrentMusic;
 
     public void setCurrentMusic(Vinyl currentMusic)
@@ -15,23 +17,23 @@ public class VinylPlayer : MonoBehaviour {
     {
         if (mcurrentMusic)
         {
-           mcurrentMusic.OnPlay();
+            PinAnimator.SetBool("play", true);
+            HandleRotator.SetRotate(true);
+            mcurrentMusic.OnPlay();
         }
     }
 
     public void PauseMusic()
     {
+        PinAnimator.SetBool("play", false);
+        HandleRotator.SetRotate(false);
         mcurrentMusic.OnPaused();
     }
 
     public void StopMusic()
     {
+        PinAnimator.SetBool("play", false);
+        HandleRotator.SetRotate(false);
         mcurrentMusic.OnEnded();
-    }
-
-
-    private void Start()
-    {
-        
     }
 }

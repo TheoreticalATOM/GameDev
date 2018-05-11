@@ -6,7 +6,9 @@ public class Vinyl : MonoBehaviour
 {
     private AudioSource musicSource;
     public AudioClip musicClip;
-
+    public Rotator Rotator;
+    
+    
     private void Awake()
     {
         if (!musicSource)
@@ -17,25 +19,19 @@ public class Vinyl : MonoBehaviour
     {
         musicSource.clip = musicClip;
         musicSource.Play();
+        
+        Rotator.SetRotate(true);
     }
 
     public virtual void OnPaused()
     {
+        Rotator.SetRotate(false);
         musicSource.Pause();
     }
 
     public void OnEnded()
     {
+        Rotator.SetRotate(false);
         musicSource.Stop();
     }
-    
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }
